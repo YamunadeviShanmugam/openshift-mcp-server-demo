@@ -72,11 +72,12 @@ nav:
     - Disaster Recovery: workflows/disaster-recovery.md
     - Observability Setup: workflows/observability.md
     - Incident Response: workflows/incident-response.md
-  - Custom Tools Support:
+  - Advanced Topics:
     - Multi-Cluster Management: advanced/multi-cluster.md
     - Custom Toolsets: advanced/custom-toolsets.md
     - API Reference: advanced/api-reference.md
     - Security Best Practices: advanced/security.md
+    - Must-Gather Analysis: advanced/must-gather.md
   - Reference:
     - Toolsets Guide: reference/toolsets.md
     - Configuration Reference: reference/configuration.md
