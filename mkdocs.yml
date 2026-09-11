@@ -59,9 +59,11 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Getting Started:
-    - Quick Start: getting-started/quickstart.md
+    - Quick Start (SRE Agent): getting-started/quickstart.md
+    - Build from Source: getting-started/build-from-source.md
     - Installation: getting-started/installation.md
     - Configuration: getting-started/configuration.md
+    - SRE Agent Setup: getting-started/sre-agent.md
     - Cursor Integration: getting-started/cursor-integration.md
   - SRE Workflows:
     - Cluster Health Monitoring: workflows/cluster-health.md

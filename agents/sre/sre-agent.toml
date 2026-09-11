@@ -1,0 +1,30 @@
+# OpenShift SRE agent — MCP server config (core only)
+# Prompts: conf.d/20-prompts.toml
+# Instructions: conf.d/10-server-instructions.toml
+# Skills & reports: agents/sre/skills/ and agents/sre/reports/
+
+read_only           = false
+disable_destructive = false
+list_output         = "yaml"
+
+toolsets = [
+  "core",
+  "config",
+  "openshift",
+  "cluster-diagnostics",
+  "openshift/mustgather",
+  "helm",
+  "cni-diagnostics",
+  "ovn-kubernetes",
+]
+
+denied_resources = [
+  { group = "",                           version = "v1", kind = "Secret"             },
+  { group = "",                           version = "v1", kind = "ConfigMap"          },
+  { group = "rbac.authorization.k8s.io", version = "v1", kind = "ClusterRole"        },
+  { group = "rbac.authorization.k8s.io", version = "v1", kind = "ClusterRoleBinding" },
+]
+
+disabled_tools = [
+  "configuration_view",
+]

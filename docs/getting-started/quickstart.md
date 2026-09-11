@@ -1,217 +1,150 @@
-# Quick Start Guide
+# Quick Start — SRE Agent Demo (one flow)
 
-Get up and running with OpenShift MCP Server in 5 minutes.
+Single setup path for the demo: **clone MCP server → clone demo → build & apply config**.
 
 ## Prerequisites
 
-- Access to a Kubernetes or OpenShift cluster
-- `kubeconfig` file (typically at `~/.kube/config`)
-- Cursor IDE or Claude Desktop installed
-- Node.js 14+ (for npm method)
+- **Go** and **make** (to build the MCP server)
+- **Git**
+- OpenShift/Kubernetes **kubeconfig** (default: `~/.kube/config`)
+- **Cursor IDE**
 
-## 5-Minute Setup
-
-### Step 1: Install the MCP Server (1 min)
-
-Choose your preferred method:
-
-=== "npm (Recommended)"
+Verify cluster access:
 
 ```bash
-npx -y openshift-mcp-server@latest \
-  --toolsets core,openshift,cluster-diagnostics,helm,kubevirt,observability/metrics,observability/logs
+kubectl get nodes
 ```
 
-=== "Native Binary"
+## Step 1 — Clone and build openshift-mcp-server
 
 ```bash
-# Download from GitHub releases
-wget https://github.com/openshift/openshift-mcp-server/releases/download/v1.0.0/openshift-mcp-server-linux-x86_64
-chmod +x openshift-mcp-server-linux-x86_64
-./openshift-mcp-server-linux-x86_64
+git clone https://github.com/openshift/openshift-mcp-server.git
+cd openshift-mcp-server
+make build
 ```
 
-=== "Docker"
+You get **`./kubernetes-mcp-server`** in that directory.
+
+Smoke test (optional):
 
 ```bash
-docker run -v ~/.kube/config:/kubeconfig:ro \
-  -e KUBECONFIG=/kubeconfig \
-  ghcr.io/openshift/openshift-mcp-server:latest
+./kubernetes-mcp-server --version
+npx @modelcontextprotocol/inspector@latest $(pwd)/kubernetes-mcp-server
 ```
 
-### Step 2: Configure Your Client (2 min)
+More build details: [Build from Source](build-from-source.md)
 
-=== "Cursor IDE"
+## Step 2 — Clone the demo repo
 
-Edit `~/.cursor/mcp.json`:
+In a sibling directory (or anywhere you prefer):
+
+```bash
+cd ..
+git clone https://github.com/YamunadeviShanmugam/openshift-mcp-server-demo.git
+cd openshift-mcp-server-demo
+```
+
+Demo layout:
+
+```text
+agents/sre/
+├── sre-agent.toml          # MCP toolsets, prompts, security
+├── conf.d/00-local.toml    # kubeconfig = ~/.kube/config
+└── reports/                # RCA reports written here
+```
+
+Optional — different kubeconfig on your machine only:
+
+```bash
+cp agents/sre/conf.d/99-local.toml.example agents/sre/conf.d/99-local.toml
+# edit path — gitignored
+```
+
+## Step 3 — Apply MCP config (Cursor)
+
+Edit **`~/.cursor/mcp.json`**. Use **absolute paths** for your machine:
+
 ```json
 {
   "mcpServers": {
-    "openshift-mcp-server": {
-      "command": "npx",
-      "args": ["-y", "openshift-mcp-server@latest"],
+    "kubernetes-mcp-server": {
+      "command": "/ABSOLUTE/PATH/openshift-mcp-server/kubernetes-mcp-server",
+      "args": [
+        "--port",
+        "",
+        "--config",
+        "/ABSOLUTE/PATH/openshift-mcp-server-demo/agents/sre/sre-agent.toml",
+        "--log-file",
+        "/tmp/kubernetes-mcp-server.log"
+      ],
       "env": {
-        "KUBECONFIG": "~/.kube/config"
+        "KUBECONFIG": "/Users/YOU/.kube/config"
       }
     }
   }
 }
 ```
 
-=== "Claude Desktop"
+| Flag | Why |
+|------|-----|
+| `command` | Binary from **Step 1** (`make build`) |
+| `--port ""` | stdio mode for Cursor |
+| `--config` | SRE agent TOML from **Step 2** |
 
-Edit `~/.config/claude.json`:
-```json
-{
-  "mcpServers": {
-    "openshift": {
-      "command": "npx",
-      "args": ["-y", "openshift-mcp-server@latest"],
-      "env": {
-        "KUBECONFIG": "~/.kube/config"
-      }
-    }
-  }
-}
-```
+Copy-paste template: [`agents/sre/mcp.json.example`](../../agents/sre/mcp.json.example)
 
-### Step 3: Verify Installation (1 min)
+**Restart Cursor**, then open **`openshift-mcp-server-demo`** as the workspace (reports save under `agents/sre/reports/`).
 
-```bash
-npx openshift-mcp-server@latest --version
-```
+## Step 4 — Run the demo
 
-You should see version information without errors.
-
-### Step 4: Start Using (1 min)
-
-In Cursor or Claude, ask:
+In Cursor chat:
 
 ```
-"Show me the health of my OpenShift cluster:
-- How many nodes?
-- Any nodes with resource pressure?
-- How many pods are in error states?
-- What about namespace resource usage?"
+/live-cluster-rca
 ```
 
-Or try specific toolsets:
+Or the health-check prompt:
 
 ```
-"List all OpenShift projects and show me deployment status"
-```
-
-```
-"Troubleshoot why my VM is not starting - is it a storage issue or resource problem?"
-```
-
-```
-"Show me Prometheus metrics for CPU usage across namespaces"
-```
-
-## ✅ Verification Checklist
-
-- [ ] `npx openshift-mcp-server@latest --version` runs without errors
-- [ ] Configuration file is in the correct location
-- [ ] `kubectl get namespaces` works (proves kubeconfig is accessible)
-- [ ] MCP server appears in your client's MCP servers list
-- [ ] You can query cluster information successfully
-- [ ] Toolsets are loading (check for any warnings)
-
-## 🎯 First SRE Workflow: Quick Cluster Assessment
-
-Try these commands to validate your setup:
-
-```
-"Give me a quick health check of my OpenShift cluster:
+Give me a quick health check of my OpenShift cluster:
 1. How many nodes and what's their status?
 2. Are there nodes with memory or CPU pressure?
 3. Which namespaces have the most pod activity?
-4. Show me any pods in CrashLoopBackOff or Error states"
+4. Show me any pods in CrashLoopBackOff or Error states
 ```
 
-Or for VM management:
+Expected: analysis + file such as  
+`agents/sre/reports/live-rca-{cluster}-{date}.md`
 
-```
-"List all VirtualMachines in the cluster and show me which ones are running"
-```
+## MCP prompts
 
-Or for observability:
+| Prompt | Purpose |
+|--------|---------|
+| `/live-cluster-rca` | Full live cluster RCA |
+| `/live-etcd-analysis` | etcd health |
+| `/live-component-rca <name>` | Scoped analysis |
+| `/must-gather-rca <dir>` | Offline bundle |
 
-```
-"Query Prometheus for the top 5 namespaces by CPU usage"
-```
+## ✅ Checklist
 
-## 🆘 Troubleshooting
+- [ ] `openshift-mcp-server/kubernetes-mcp-server` exists (`make build`)
+- [ ] `openshift-mcp-server-demo/agents/sre/sre-agent.toml` exists
+- [ ] `~/.cursor/mcp.json` points to both paths above
+- [ ] Cursor workspace = **openshift-mcp-server-demo**
+- [ ] MCP connected in Cursor settings
+- [ ] Report saved under `agents/sre/reports/`
 
-### "Command not found: npx"
+## Troubleshooting
 
-Install Node.js from https://nodejs.org/
+| Problem | Fix |
+|---------|-----|
+| MCP not connected | Valid JSON; restart Cursor; `tail -f /tmp/kubernetes-mcp-server.log` |
+| Wrong cluster | `kubectl config current-context`; set `KUBECONFIG` in `mcp.json` |
+| No report file | Open demo repo as Cursor workspace |
+| Build fails | Match Go version in `openshift-mcp-server/go.mod` |
 
-```bash
-node --version  # Should be v14 or higher
-npm --version   # Should be npm 6 or higher
-```
+## Next steps
 
-### "Cannot connect to cluster"
-
-Verify your kubeconfig:
-
-```bash
-kubectl get namespaces
-# If this fails, your kubeconfig isn't accessible
-```
-
-### "Toolsets not loading"
-
-Check which toolsets are available:
-
-```bash
-npx openshift-mcp-server@latest --help | grep toolsets
-```
-
-Enable specific toolsets:
-
-```bash
-npx openshift-mcp-server@latest \
-  --toolsets core,openshift,cluster-diagnostics,helm,kubevirt
-```
-
-### "Permission denied"
-
-Check your cluster permissions:
-
-```bash
-kubectl auth can-i get pods --all-namespaces
-kubectl auth can-i get nodes
-```
-
-### "Kubeconfig not found"
-
-Set the KUBECONFIG environment variable:
-
-```bash
-export KUBECONFIG=~/.kube/config
-npx openshift-mcp-server@latest
-```
-
-## 📚 Next Steps
-
-- **Learn SRE Workflows**: [Cluster Health Monitoring](../workflows/cluster-health.md)
-- **Advanced Configuration**: [Configuration Guide](configuration.md)
-- **Understand Toolsets**: [Toolsets Reference](../reference/toolsets.md)
-- **Production Setup**: [Security Best Practices](../custom-tools-support/security.md)
-- **Troubleshooting**: [Troubleshooting Guide](../reference/troubleshooting.md)
-
-## 💡 Tips
-
-- **Enable only needed toolsets** to reduce context size and improve AI accuracy
-- **Test with safe queries first** like listing namespaces
-- **Keep your kubeconfig secure** - don't commit it to version control
-- **For multi-cluster**, ensure your `~/.kube/config` has multiple contexts
-- **Use descriptive queries** for better AI understanding of what you need
-- **Check the Toolsets Guide** for available capabilities
-
----
-
-**All set?** → [Explore SRE Workflows](../workflows/cluster-health.md)
+- [SRE Agent Setup](sre-agent.md) — prompts, reports, security
+- [Build from Source](build-from-source.md) — multi-platform builds, mcp-inspector
+- [Cluster Health Workflow](../workflows/cluster-health.md)

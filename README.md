@@ -12,10 +12,12 @@ This repository contains comprehensive SRE-focused documentation and best practi
 
 ```
 📖 SRE Edition Documentation
+├── agents/sre/                  ← OpenShift SRE agent (MCP config, prompts, reports)
 ├── Getting Started (5-30 minutes setup)
 │   ├── Quick Start
 │   ├── Installation Guide
 │   ├── Configuration Guide
+│   ├── SRE Agent Setup
 │   └── Cursor Integration
 │
 ├── SRE Workflows (Tab-Based)
@@ -40,38 +42,28 @@ This repository contains comprehensive SRE-focused documentation and best practi
     └── FAQ
 ```
 
-## 🚀 Quick Start
-
-### 1. Install (30 seconds)
+## 🚀 Quick Start (one flow)
 
 ```bash
-npx -y kubernetes-mcp-server@latest --read-only
+# 1. MCP server
+git clone https://github.com/openshift/openshift-mcp-server.git
+cd openshift-mcp-server && make build
+
+# 2. Demo repo
+cd ..
+git clone https://github.com/YamunadeviShanmugam/openshift-mcp-server-demo.git
+cd openshift-mcp-server-demo
 ```
 
-### 2. Configure (1 minute)
+**3. Apply config** — copy paths from [`agents/sre/mcp.json.example`](agents/sre/mcp.json.example) into `~/.cursor/mcp.json`, restart Cursor, open this repo as workspace.
 
-Edit `~/.cursor/mcp.json`:
+Full steps: **[Quick Start Guide](docs/getting-started/quickstart.md)**
 
-```json
-{
-  "mcpServers": {
-    "kubernetes-mcp-server": {
-      "command": "npx",
-      "args": ["-y", "kubernetes-mcp-server@latest", "--read-only"]
-    }
-  }
-}
-```
-
-### 3. Use (Immediately)
-
-In Cursor chat:
-```
-"List all pods in my cluster and show me any that are in error state"
-```
+In Cursor chat: `/live-cluster-rca` → report in `agents/sre/reports/`
 
 ## 📖 Documentation
 
+- **SRE Agent**: [Setup Guide](docs/getting-started/sre-agent.md) — prompts, RCA reports, must-gather
 - **Getting Started**: [Quick Start Guide](docs/getting-started/quickstart.md)
 - **SRE Workflows**:
   - [Cluster Health Monitoring](docs/workflows/cluster-health.md)
@@ -158,16 +150,16 @@ See [Installation Guide](docs/getting-started/installation.md) for details.
 
 ## 🎓 Learning Path
 
-1. **Start**: [Quick Start (5 min)](docs/getting-started/quickstart.md)
-2. **Configure**: [Configuration Guide (5 min)](docs/getting-started/configuration.md)
-3. **Learn**: [Choose SRE Workflow](#-sre-workflows-tab-based)
-4. **Advanced**: [Multi-Cluster Guide](docs/advanced/multi-cluster.md)
+1. **Start**: [Quick Start — one flow](docs/getting-started/quickstart.md) — clone MCP server → clone demo → apply config
+2. **Learn**: [SRE Workflows](#-sre-workflows-at-a-glance)
+3. **Advanced**: [Must-Gather Analysis](docs/advanced/must-gather.md)
 
 ## 🔗 Related Projects
 
-- **Official Repository**: [containers/kubernetes-mcp-server](https://github.com/containers/kubernetes-mcp-server)
-- **Workshop MCP Server**: [gangwgr/workshop-mcp-server](https://github.com/gangwgr/workshop-mcp-server)
-- **Model Context Protocol**: [modelcontextprotocol.io](https://modelcontextprotocol.io)
+- **OpenShift fork (build source):** [openshift/openshift-mcp-server](https://github.com/openshift/openshift-mcp-server) — `make build` → `kubernetes-mcp-server`
+- **Upstream:** [containers/kubernetes-mcp-server](https://github.com/containers/kubernetes-mcp-server)
+- **Build guide:** [Build from Source](docs/getting-started/build-from-source.md)
+- **Model Context Protocol:** [modelcontextprotocol.io](https://modelcontextprotocol.io)
 
 ## 💡 Pro Tips
 

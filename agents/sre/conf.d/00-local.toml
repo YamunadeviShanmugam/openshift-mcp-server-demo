@@ -1,0 +1,5 @@
+# Demo kubeconfig — committed for out-of-the-box setup.
+# Override locally with conf.d/99-local.toml (gitignored) if needed.
+# Loaded automatically from conf.d/ next to sre-agent.toml.
+
+kubeconfig = "~/.kube/config"
