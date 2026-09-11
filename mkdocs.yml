@@ -79,6 +79,7 @@ nav:
     - Must-Gather Analysis: advanced/must-gather.md
   - Reference:
     - Toolsets Guide: reference/toolsets.md
+    - SRE Tools Analysis: reference/sre-tools-analysis.md
     - Configuration Reference: reference/configuration.md
     - Troubleshooting: reference/troubleshooting.md
     - FAQ: reference/faq.md
