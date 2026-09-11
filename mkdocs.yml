@@ -1,8 +1,8 @@
 site_name: OpenShift MCP Server - SRE Edition
 site_description: AI-Powered OpenShift Operations for Site Reliability Engineers
 site_author: OpenShift MCP Community
-repo_url: https://github.com/YamunadeviShanmugam/openshift-mcp-server-demo
-repo_name: openshift-mcp-server-demo
+repo_url: https://github.com/openshift/openshift-mcp-server
+repo_name: openshift-mcp-server
 edit_uri: edit/main/docs/
 
 theme:
