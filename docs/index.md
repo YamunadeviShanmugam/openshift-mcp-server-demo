@@ -1,72 +1,117 @@
 # OpenShift MCP Server - SRE Edition
 
-Welcome to the **OpenShift MCP Server** documentation - an AI-powered assistant for Site Reliability Engineers managing Kubernetes and OpenShift clusters.
+Welcome to the **OpenShift MCP Server** documentation - a native Go-based Model Context Protocol server that enables AI assistants (Claude, Cursor, etc.) to interact with your Kubernetes and OpenShift clusters through natural language.
 
-## 🎯 What is This?
+## 🎯 What is OpenShift MCP Server?
 
-The OpenShift MCP Server is a **native Go-based Model Context Protocol server** that enables AI assistants (Claude, Cursor, etc.) to interact with your Kubernetes and OpenShift clusters through natural language. Unlike kubectl wrappers, this is a direct API client with enterprise-grade features.
+The OpenShift MCP Server is a **direct Kubernetes API client** - NOT a kubectl wrapper. It provides 18+ specialized toolsets for advanced cluster operations, enabling SREs to leverage AI for:
 
-### Key Capabilities for SREs
+- **Advanced Diagnostics** - Automated root-cause detection and troubleshooting
+- **Multi-Cluster Management** - Seamless operations across multiple clusters
+- **OpenShift Virtualization** - VM management and automated troubleshooting
+- **Service Mesh Operations** - OSSM (OpenShift Service Mesh) management
+- **Network Troubleshooting** - CNI, OVN, and NetObserv integration
+- **Observability Stack** - Prometheus, Loki, Tempo, and OpenTelemetry
+- **Backup Automation** - OADP/Velero backup and restore operations
+- **Security & Compliance** - RBAC audits, policy enforcement, secrets management
+- **Performance Analysis** - Resource metrics, bottleneck identification
+- **CI/CD Integration** - Tekton pipeline management and monitoring
 
-- **Cluster Diagnostics** - Real-time cluster health, node status, resource utilization
-- **Troubleshooting** - Pod logs, events, resource analysis, and debugging
-- **Security & Compliance** - RBAC audits, secret management, policy enforcement
-- **Performance Analysis** - Resource metrics, bottleneck identification, optimization
-- **Disaster Recovery** - Backup validation, cluster state verification, recovery procedures
-- **Multi-Cluster Support** - Manage multiple OpenShift environments simultaneously
-- **Observability** - Prometheus queries, Loki logs, Jaeger traces, OTEL integration
+## 🚀 18+ Available Toolsets
 
-## 🚀 Quick Links
-
-| Purpose | Link |
-|---------|------|
-| **New Users** | [Quick Start →](getting-started/quickstart.md) |
-| **Installation** | [Installation Guide →](getting-started/installation.md) |
-| **SRE Workflows** | [Cluster Health Monitoring →](workflows/cluster-health.md) |
-| **Troubleshooting** | [Debug & Troubleshoot →](workflows/troubleshooting.md) |
-| **Advanced Setup** | [Multi-Cluster Management →](advanced/multi-cluster.md) |
+| Toolset | Purpose | Status |
+|---------|---------|--------|
+| **core** | Pod, namespace, resource management | ✓ Default |
+| **cluster-diagnostics** | Advanced cluster health & diagnostics | Optional |
+| **openshift** | OpenShift-specific operations | Optional |
+| **kubevirt** | OpenShift Virtualization / VM management | Optional |
+| **vm_troubleshoot** | Automated VM issue detection & fixes | Optional |
+| **ossm** | OpenShift Service Mesh (Istio) | Optional |
+| **cni-diagnostics** | Container Network Interface diagnostics | Optional |
+| **ovn-kubernetes** | OVN network troubleshooting | Optional |
+| **netedge** | Edge network diagnostics | Optional |
+| **netobserv** | Network observability & flows | Optional |
+| **observability/metrics** | Prometheus queries & metrics | Optional |
+| **observability/logs** | Loki log queries | Optional |
+| **observability/traces** | Distributed tracing (Tempo) | Optional |
+| **observability/otelcol** | OpenTelemetry Collector config | Optional |
+| **oadp** | Velero backup/restore automation | Optional |
+| **helm** | Helm chart management | Optional |
+| **tekton** | Tekton pipeline management | Optional |
+| **kcp** | KCP workspaces & multi-tenancy | Optional |
 
 ## 📊 Common SRE Workflows
 
-### Cluster Health Monitoring
-Monitor cluster health, node resources, and pod status with natural language queries.
+### 1. Cluster Health & Diagnostics
 
 ```
-"Show me nodes with high memory usage and any pods in CrashLoopBackOff state"
+"Show me cluster health status, node resource usage, and any pods in error states"
 ```
 
-### Incident Response
-Quickly diagnose and respond to incidents with comprehensive cluster analysis.
+Available toolsets: `cluster-diagnostics`, `core`, `observability/metrics`
+
+### 2. VM Troubleshooting (OpenShift Virtualization)
 
 ```
-"My application deployment is failing - show me the pod status, recent events, and logs"
+"Why is my VM stuck in Provisioning state? Show me the issue and how to fix it"
 ```
 
-### Security Audits
-Check RBAC configurations, secrets, and compliance with security policies.
+Available toolsets: `kubevirt`, `vm_troubleshoot`
+
+### 3. Service Mesh Operations
 
 ```
-"List all ServiceAccounts with cluster-admin role and audit the last 24 hours of changes"
+"Deploy a VirtualService with traffic routing for my application"
 ```
 
-### Performance Optimization
-Identify bottlenecks and optimize resource allocation.
+Available toolsets: `ossm`, `openshift`
+
+### 4. Network Diagnostics
 
 ```
-"Analyze which pods are using the most CPU and memory, and recommend resource limits"
+"Diagnose network connectivity issues between pods in different namespaces"
 ```
+
+Available toolsets: `cni-diagnostics`, `ovn-kubernetes`, `netobserv`
+
+### 5. Observability & Monitoring
+
+```
+"Query Prometheus for CPU usage, show Loki logs for errors, and trace requests through Tempo"
+```
+
+Available toolsets: `observability/metrics`, `observability/logs`, `observability/traces`
+
+### 6. Backup & Disaster Recovery
+
+```
+"Create a backup of my database namespace using OADP and verify it's restorable"
+```
+
+Available toolsets: `oadp`, `core`
+
+### 7. CI/CD Pipeline Management
+
+```
+"Show me all Tekton pipelines and their recent runs"
+```
+
+Available toolsets: `tekton`
 
 ## 🛠️ Why Choose OpenShift MCP Server?
 
-| Feature | Benefit |
-|---------|---------|
-| **Native Implementation** | Direct API calls, no kubectl overhead |
-| **No Dependencies** | Single binary, npm package, or container |
-| **Multi-Cluster** | Manage multiple clusters from one interface |
-| **Enterprise Ready** | TLS, OAuth, RBAC, read-only mode, resource restrictions |
-| **AI-Powered** | Leverage Claude, ChatGPT, or any LLM for intelligent analysis |
-| **Fast & Efficient** | Low latency, minimal resource usage |
-| **Open Source** | MIT licensed, community-driven |
+| Feature | OpenShift MCP | kubectl wrapper |
+|---------|---------------|-----------------|
+| Native Implementation | ✓ Direct Kubernetes API | ✗ Shell commands |
+| Toolsets | ✓ 18+ specialized | ✗ Limited |
+| Multi-Cluster | ✓ Built-in | ✗ Context switching |
+| VM Management | ✓ Full KubeVirt support | ✗ Not available |
+| Service Mesh | ✓ OSSM integration | ✗ Not available |
+| Network Tools | ✓ Advanced diagnostics | ✗ Basic only |
+| Observability | ✓ Full stack (Prometheus, Loki, Tempo, OTEL) | ✗ Partial |
+| Backup Automation | ✓ OADP integration | ✗ Not available |
+| No Dependencies | ✓ Single binary | ✗ Requires kubectl, helm, etc. |
+| Performance | ✓ Direct API calls | ✗ Shell overhead |
 
 ## 📖 Documentation Structure
 
@@ -75,8 +120,8 @@ Identify bottlenecks and optimize resource allocation.
 ├── Getting Started
 │   ├── Quick Start (5 minutes)
 │   ├── Installation (Multiple methods)
-│   ├── Configuration
-│   └── Cursor Integration
+│   ├── Configuration (Toolsets & features)
+│   └── Cursor Integration (IDE setup)
 │
 ├── SRE Workflows (Tab-based)
 │   ├── Cluster Health Monitoring
@@ -87,14 +132,14 @@ Identify bottlenecks and optimize resource allocation.
 │   ├── Observability Setup
 │   └── Incident Response
 │
-├── Advanced Topics
+├── Custom Tools Support
 │   ├── Multi-Cluster Management
 │   ├── Custom Toolsets
 │   ├── API Reference
 │   └── Security Best Practices
 │
 └── Reference
-    ├── Toolsets Guide
+    ├── Toolsets Guide (All 18+ toolsets)
     ├── Configuration Reference
     ├── Troubleshooting
     └── FAQ
@@ -106,33 +151,27 @@ Identify bottlenecks and optimize resource allocation.
 
 === "npm (Recommended)"
 
-    ```bash
-    npx -y kubernetes-mcp-server@latest --read-only
-    ```
-
-=== "uvx (Python)"
-
-    ```bash
-    uvx kubernetes-mcp-server --read-only
-    ```
+```bash
+npx -y openshift-mcp-server@latest --toolsets core,openshift,cluster-diagnostics,helm,oadp,kubevirt,observability/metrics,observability/logs
+```
 
 === "Native Binary"
 
-    ```bash
-    wget https://github.com/containers/kubernetes-mcp-server/releases/download/v1.0.0/kubernetes-mcp-server-linux-x86_64
-    chmod +x kubernetes-mcp-server-linux-x86_64
-    ./kubernetes-mcp-server-linux-x86_64 --read-only
-    ```
+```bash
+wget https://github.com/openshift/openshift-mcp-server/releases/download/v1.0.0/openshift-mcp-server-linux-x86_64
+chmod +x openshift-mcp-server-linux-x86_64
+./openshift-mcp-server-linux-x86_64 --toolsets core,openshift,cluster-diagnostics
+```
 
 === "Docker"
 
-    ```bash
-    docker run -v ~/.kube/config:/kubeconfig:ro \
-      -e KUBECONFIG=/kubeconfig \
-      -p 8080:8080 \
-      ghcr.io/containers/kubernetes-mcp-server:latest \
-      --port 8080 --read-only
-    ```
+```bash
+docker run -v ~/.kube/config:/kubeconfig:ro \
+  -e KUBECONFIG=/kubeconfig \
+  -p 8080:8080 \
+  ghcr.io/openshift/openshift-mcp-server:latest \
+  --port 8080 --toolsets core,openshift
+```
 
 ### 2. Add to Cursor
 
@@ -141,9 +180,12 @@ Edit `~/.cursor/mcp.json`:
 ```json
 {
   "mcpServers": {
-    "kubernetes-mcp-server": {
+    "openshift-mcp-server": {
       "command": "npx",
-      "args": ["-y", "kubernetes-mcp-server@latest", "--read-only"]
+      "args": ["-y", "openshift-mcp-server@latest"],
+      "env": {
+        "KUBECONFIG": "~/.kube/config"
+      }
     }
   }
 }
@@ -151,24 +193,35 @@ Edit `~/.cursor/mcp.json`:
 
 ### 3. Start Using
 
-Ask Cursor: **"List all namespaces and show me any pods in error state"**
+Ask Cursor: **"Show me cluster health and any pods in error state"**
+
+Or: **"Troubleshoot why my VM is stuck in Provisioning state"**
 
 ## ✨ Next Steps
 
-- **New to OpenShift MCP?** Start with [Quick Start Guide](getting-started/quickstart.md)
-- **Need to debug an issue?** Check [Troubleshooting Workflows](workflows/troubleshooting.md)
-- **Managing multiple clusters?** See [Multi-Cluster Guide](advanced/multi-cluster.md)
-- **Want production setup?** Review [Security Best Practices](advanced/security.md)
+* **New to OpenShift MCP?** Start with [Quick Start Guide](getting-started/quickstart.md)
+* **Need to debug?** Check [Troubleshooting Workflows](workflows/troubleshooting.md)
+* **Manage VMs?** See [Virtualization Guide](custom-tools-support/kubevirt-guide.md)
+* **Monitor cluster?** Review [Observability Setup](workflows/observability.md)
+* **Production setup?** Read [Security Best Practices](custom-tools-support/security.md)
+
+## 📚 Key Resources
+
+- **Official Repository**: [openshift/openshift-mcp-server](https://github.com/openshift/openshift-mcp-server)
+- **Full Documentation**: [GitHub Docs](https://github.com/openshift/openshift-mcp-server/tree/main/docs)
+- **Kubernetes MCP Base**: [containers/kubernetes-mcp-server](https://github.com/containers/kubernetes-mcp-server)
+- **Community & Support**: [GitHub Issues](https://github.com/openshift/openshift-mcp-server/issues)
 
 ## 🤝 Community & Support
 
-- **GitHub Issues**: [Report bugs or suggest features](https://github.com/containers/kubernetes-mcp-server/issues)
-- **Discussions**: [Ask questions and share knowledge](https://github.com/containers/kubernetes-mcp-server/discussions)
-- **Documentation**: [Official GitHub Repo](https://github.com/containers/kubernetes-mcp-server)
+* **GitHub Issues**: Report bugs or suggest features
+* **Discussions**: Ask questions and share knowledge
+* **Documentation**: Official GitHub Repo
+* **Community**: Active contributors and SREs
 
 ## 📝 License
 
-This documentation and OpenShift MCP Server are licensed under the MIT License.
+This documentation and OpenShift MCP Server are licensed under the Apache License 2.0.
 
 ---
 

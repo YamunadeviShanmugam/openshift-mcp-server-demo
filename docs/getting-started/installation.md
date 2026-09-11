@@ -1,345 +1,345 @@
 # Installation Guide
 
-Detailed installation instructions for all platforms and methods.
+Complete guide to installing OpenShift MCP Server in different environments.
+
+## System Requirements
+
+- **OS**: Linux, macOS, or Windows (with WSL)
+- **Kubernetes**: 1.20+ or OpenShift 4.8+
+- **Network**: Access to Kubernetes API server
+- **Credentials**: Valid kubeconfig file with cluster access
 
 ## Installation Methods
 
-### Method 1: npm (Recommended) ⭐
+### Method 1: npm (Recommended)
 
-**Best for**: Most users, automatic updates, cross-platform
-
-#### Requirements
-- Node.js v14+
-- npm v6+
-
-#### Installation
+Simplest method - works across all platforms.
 
 ```bash
-# One-time installation (optional)
-npm install -g kubernetes-mcp-server
+# Install globally
+npm install -g openshift-mcp-server
 
-# Or use npx (recommended - always runs latest)
-npx -y kubernetes-mcp-server@latest --read-only
-```
-
-#### Verification
-```bash
-npx kubernetes-mcp-server --help
+# Or run directly
+npx -y openshift-mcp-server@latest
 ```
 
 **Advantages:**
-- ✅ Automatic updates via `npx`
-- ✅ No local installation needed
-- ✅ Works on macOS, Linux, Windows
-- ✅ Easiest to configure in clients
+- No system dependencies
+- Easy to update
+- Works on macOS, Linux, Windows
 
-**Disadvantages:**
-- ❌ Requires Node.js/npm
-- ❌ First run downloads ~50MB
+### Method 2: Native Binary
 
-### Method 2: uvx (Python) 🐍
-
-**Best for**: Python-focused environments, Python venv users
-
-#### Requirements
-- Python 3.8+
-- uv package manager
-
-#### Installation
-
-```bash
-# Install uv first
-pip install uv
-
-# Then run
-uvx kubernetes-mcp-server --read-only
-```
-
-#### Verification
-```bash
-uvx kubernetes-mcp-server --help
-```
-
-**Advantages:**
-- ✅ Python ecosystem
-- ✅ Similar to npx but for Python
-- ✅ Isolated environment
-
-**Disadvantages:**
-- ❌ Requires Python installation
-- ❌ Requires uv package manager
-
-### Method 3: Native Binary 🔧
-
-**Best for**: Minimal dependencies, production deployment, static binaries
-
-#### Requirements
-- Linux, macOS, or Windows OS
-- x86_64 or ARM64 architecture
-
-#### Installation
+Download pre-built binaries from GitHub releases.
 
 ```bash
 # Download latest release
-RELEASE_URL="https://github.com/containers/kubernetes-mcp-server/releases/download"
-LATEST_VERSION=$(curl -sL https://api.github.com/repos/containers/kubernetes-mcp-server/releases/latest | jq -r '.tag_name')
+wget https://github.com/openshift/openshift-mcp-server/releases/download/latest/openshift-mcp-server-linux-x86_64
+chmod +x openshift-mcp-server-linux-x86_64
 
-# For Linux x86_64
-wget "${RELEASE_URL}/${LATEST_VERSION}/kubernetes-mcp-server-linux-x86_64"
-chmod +x kubernetes-mcp-server-linux-x86_64
-
-# For macOS (Intel)
-wget "${RELEASE_URL}/${LATEST_VERSION}/kubernetes-mcp-server-darwin-x86_64"
-chmod +x kubernetes-mcp-server-darwin-x86_64
-
-# For macOS (Apple Silicon)
-wget "${RELEASE_URL}/${LATEST_VERSION}/kubernetes-mcp-server-darwin-arm64"
-chmod +x kubernetes-mcp-server-darwin-arm64
-
-# For Windows
-# Download from: https://github.com/containers/kubernetes-mcp-server/releases
-# Extract and add to PATH
-```
-
-#### Verification
-```bash
-./kubernetes-mcp-server-linux-x86_64 --help
-```
-
-#### Optional: Add to PATH
-
-```bash
-# Move to /usr/local/bin for easy access
-sudo mv kubernetes-mcp-server-linux-x86_64 /usr/local/bin/kubernetes-mcp-server
-
-# Then use directly
-kubernetes-mcp-server --read-only
+# Run
+./openshift-mcp-server-linux-x86_64 --toolsets core,openshift
 ```
 
 **Advantages:**
-- ✅ No dependencies
-- ✅ Fast startup
-- ✅ Available for all major OS
-- ✅ Easy to version control
-- ✅ Great for container deployments
+- No dependencies
+- Fastest startup
+- Can be placed anywhere
 
-**Disadvantages:**
-- ❌ Manual updates needed
-- ❌ Binary size ~50MB
+### Method 3: Docker
 
-### Method 4: Docker Container 🐳
-
-**Best for**: Isolated environments, CI/CD, Kubernetes deployments
-
-#### Requirements
-- Docker installed and running
-- kubeconfig volume mount
-
-#### Installation
+Run in a container for isolation and consistency.
 
 ```bash
-# Run directly (no local installation)
 docker run -v ~/.kube/config:/kubeconfig:ro \
   -e KUBECONFIG=/kubeconfig \
   -p 8080:8080 \
-  ghcr.io/containers/kubernetes-mcp-server:latest \
-  --port 8080 --read-only
-```
-
-#### For HTTP Mode (Recommended for Docker)
-
-```bash
-docker run \
-  --name kubernetes-mcp-server \
-  -v ~/.kube/config:/kubeconfig:ro \
-  -e KUBECONFIG=/kubeconfig \
-  -p 8080:8080 \
-  -d \
-  ghcr.io/containers/kubernetes-mcp-server:latest \
-  --port 8080 --read-only
-
-# Access at http://localhost:8080/mcp
-```
-
-#### Kubernetes Deployment
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: kubernetes-mcp-server
-  namespace: default
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: kubernetes-mcp-server
-  template:
-    metadata:
-      labels:
-        app: kubernetes-mcp-server
-    spec:
-      serviceAccountName: mcp-viewer
-      containers:
-      - name: kubernetes-mcp-server
-        image: ghcr.io/containers/kubernetes-mcp-server:latest
-        args:
-          - --port
-          - "8080"
-          - --read-only
-        ports:
-        - containerPort: 8080
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "100m"
-          limits:
-            memory: "256Mi"
-            cpu: "500m"
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: mcp-viewer
-  namespace: default
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: mcp-viewer
-rules:
-- apiGroups: [""]
-  resources: ["pods", "namespaces", "events", "nodes"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["apps"]
-  resources: ["deployments", "statefulsets", "daemonsets"]
-  verbs: ["get", "list"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: mcp-viewer-binding
-subjects:
-- kind: ServiceAccount
-  name: mcp-viewer
-  namespace: default
-roleRef:
-  kind: ClusterRole
-  name: mcp-viewer
-  apiGroup: rbac.authorization.k8s.io
+  ghcr.io/openshift/openshift-mcp-server:latest \
+  --port 8080
 ```
 
 **Advantages:**
-- ✅ Complete isolation
-- ✅ Consistent across environments
-- ✅ Easy Kubernetes deployment
-- ✅ Network-based access
+- Isolated environment
+- Consistent across machines
+- Easy to manage
 
-**Disadvantages:**
-- ❌ Docker overhead
-- ❌ Port exposure needed
-- ❌ Network latency vs local
+### Method 4: Python (uvx)
 
-## Post-Installation
-
-### 1. Verify kubeconfig Access
+Alternative for Python environments.
 
 ```bash
-kubectl get namespaces
+uvx openshift-mcp-server --toolsets core,openshift
 ```
 
-If this fails, your kubeconfig isn't accessible. Fix it before continuing.
+## Integration with Cursor/Claude
 
-### 2. Test MCP Server
+### Cursor IDE Configuration
+
+Edit `~/.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "openshift-mcp-server": {
+      "command": "npx",
+      "args": ["-y", "openshift-mcp-server@latest"],
+      "env": {
+        "KUBECONFIG": "~/.kube/config"
+      },
+      "description": "OpenShift MCP Server - 18+ toolsets for cluster management"
+    }
+  }
+}
+```
+
+### Claude Desktop Configuration
+
+Edit `~/.config/claude.json`:
+
+```json
+{
+  "mcpServers": {
+    "openshift": {
+      "command": "npx",
+      "args": ["-y", "openshift-mcp-server@latest"],
+      "env": {
+        "KUBECONFIG": "~/.kube/config"
+      }
+    }
+  }
+}
+```
+
+## Configuring Toolsets
+
+Enable specific toolsets based on your needs.
+
+### Basic Setup
 
 ```bash
-npx kubernetes-mcp-server --help
+openshift-mcp-server --toolsets core,openshift
 ```
 
-### 3. Configure Your Client
-
-See [Configuration](configuration.md) for your specific client.
-
-### 4. First Query
-
-```
-"List all pods in the default namespace"
-```
-
-## Updating
-
-### For npm Installation
+### SRE Full Stack
 
 ```bash
-# npx always uses latest
-npx -y kubernetes-mcp-server@latest --read-only
-
-# If installed globally, update
-npm update -g kubernetes-mcp-server
+openshift-mcp-server --toolsets \
+  core,openshift,cluster-diagnostics,helm,tekton,oadp,kubevirt, \
+  observability/metrics,observability/logs,observability/traces
 ```
 
-### For Binary Installation
+### Network Diagnostics
 
 ```bash
-# Download latest from releases
-# Backup old binary
-mv kubernetes-mcp-server kubernetes-mcp-server.backup
-
-# Download and test new version
+openshift-mcp-server --toolsets \
+  core,cni-diagnostics,ovn-kubernetes,netobserv,netedge
 ```
 
-### For Docker
+### Virtualization
 
 ```bash
-# Pull latest image
-docker pull ghcr.io/containers/kubernetes-mcp-server:latest
-
-# Recreate container
-docker rm kubernetes-mcp-server
-docker run ... # Same docker run command as above
+openshift-mcp-server --toolsets core,kubevirt,helm
 ```
 
-## Comparison Table
+### Service Mesh
 
-| Method | Ease | Speed | Dependencies | Updates | Best For |
-|--------|------|-------|--------------|---------|----------|
-| npm | ⭐⭐⭐ | ⭐⭐ | Node.js | Auto | Most Users |
-| uvx | ⭐⭐ | ⭐⭐ | Python | Auto | Python Users |
-| Binary | ⭐⭐⭐ | ⭐⭐⭐ | None | Manual | Production |
-| Docker | ⭐⭐ | ⭐ | Docker | Manual | CI/CD |
+```bash
+openshift-mcp-server --toolsets core,openshift,ossm,helm
+```
 
-## Troubleshooting
+## Configuration File
+
+Create a config file for persistent settings:
+
+### config.yaml
+
+```yaml
+server:
+  address: 127.0.0.1
+  port: 8080
+  sse-base-url: https://example.com:8080
+
+kubeconfig:
+  path: ~/.kube/config
+
+toolsets:
+  - core
+  - openshift
+  - cluster-diagnostics
+  - helm
+  - kubevirt
+  - observability/metrics
+  - observability/logs
+  - oadp
+
+logging:
+  level: info
+  format: json
+```
+
+Run with config:
+
+```bash
+openshift-mcp-server --config config.yaml
+```
+
+## Environment Variables
+
+Override configuration with environment variables:
+
+```bash
+# Kubeconfig location
+export KUBECONFIG=~/.kube/config
+
+# Server configuration
+export MCP_PORT=8080
+export MCP_ADDRESS=127.0.0.1
+
+# Toolsets
+export MCP_TOOLSETS="core,openshift,cluster-diagnostics,helm"
+
+# Logging
+export MCP_LOG_LEVEL=info
+
+# Start server
+openshift-mcp-server
+```
+
+## Multi-Cluster Setup
+
+Configure multiple clusters for seamless switching.
+
+### ~/.kube/config
+
+```yaml
+apiVersion: v1
+clusters:
+  - cluster:
+      server: https://api.production.example.com:6443
+    name: production
+  - cluster:
+      server: https://api.staging.example.com:6443
+    name: staging
+contexts:
+  - context:
+      cluster: production
+      user: admin
+    name: production-admin
+  - context:
+      cluster: staging
+      user: developer
+    name: staging-dev
+current-context: production-admin
+users:
+  - name: admin
+    user:
+      token: <token>
+  - name: developer
+    user:
+      token: <token>
+```
+
+Use in queries:
+
+```
+"Show me cluster health for both production and staging clusters"
+```
+
+The server automatically detects contexts and allows you to specify which cluster to use.
+
+## Troubleshooting Installation
 
 ### "Command not found"
 
-Install the required runtime:
-- **npm**: https://nodejs.org/
-- **uvx**: https://astral.sh/uv/
-- **Docker**: https://docker.com/
+If `openshift-mcp-server` command not found:
+
+```bash
+# For npm installation
+npm install -g openshift-mcp-server
+npm list -g openshift-mcp-server
+
+# For binary
+sudo mv openshift-mcp-server-linux-x86_64 /usr/local/bin/openshift-mcp-server
+which openshift-mcp-server
+```
 
 ### "Cannot connect to cluster"
 
-```bash
-# Test kubeconfig
-kubectl get namespaces
+Verify kubeconfig:
 
-# If it fails, kubeconfig isn't accessible
-# Check path, permissions, and validity
+```bash
+# Check kubeconfig
+kubectl config view
+
+# Test connection
+kubectl get nodes
+
+# Set correct kubeconfig
+export KUBECONFIG=~/.kube/config
+```
+
+### "Toolsets not working"
+
+Check available toolsets:
+
+```bash
+openshift-mcp-server --help
+```
+
+Verify toolset is available for your cluster:
+
+```bash
+# For Virtualization
+kubectl get crd virtualmachines.kubevirt.io
+
+# For OSSM
+kubectl get ns openshift-operators
+
+# For OADP
+kubectl get crd backups.velero.io
+```
+
+### "Port already in use"
+
+Use different port:
+
+```bash
+openshift-mcp-server --port 8081
 ```
 
 ### "Permission denied"
 
+Check RBAC permissions:
+
 ```bash
-# Check you can access cluster
 kubectl auth can-i get pods --all-namespaces
+kubectl auth can-i get nodes
+kubectl auth can-i list events --all-namespaces
+```
+
+## Verifying Installation
+
+```bash
+# Check version
+openshift-mcp-server --version
+
+# Check available toolsets
+openshift-mcp-server --help | grep toolsets
+
+# Test cluster access
+kubectl get nodes
+
+# Verify kubeconfig
+kubectl cluster-info
 ```
 
 ## Next Steps
 
-- [Configuration Guide](configuration.md)
-- [Quick Start](quickstart.md)
-- [SRE Workflows](../workflows/cluster-health.md)
+- Configure for [Cursor Integration](cursor-integration.md)
+- Explore [SRE Workflows](../workflows/cluster-health.md)
+- Review [Configuration Reference](configuration.md)
+- Check [Toolsets Guide](../reference/toolsets.md)
 
 ---
 
-**Installation complete?** → [Configure Your Client](configuration.md)
+**Ready?** → [Quick Start Guide](quickstart.md)
