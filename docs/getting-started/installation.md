@@ -1,14 +1,6 @@
 # Installation Guide
 
-Reference for install options. **For the SRE demo, use the single flow in [Quick Start](quickstart.md):**
-
-1. Clone [openshift/openshift-mcp-server](https://github.com/openshift/openshift-mcp-server) → `make build`
-2. Clone the demo repo
-3. Apply [`agents/sre/mcp.json.example`](../../agents/sre/mcp.json.example)
-
----
-
-The sections below describe alternative install methods (not used in the team demo flow).
+Complete guide to installing OpenShift MCP Server in different environments.
 
 ## System Requirements
 
@@ -36,55 +28,25 @@ npx -y openshift-mcp-server@latest
 - Easy to update
 - Works on macOS, Linux, Windows
 
-### Method 2: Native Binary (pre-built)
+### Method 2: Native Binary
 
-Download pre-built binaries from GitHub releases:
-
-- [openshift/openshift-mcp-server releases](https://github.com/openshift/openshift-mcp-server/releases)
-- [containers/kubernetes-mcp-server releases](https://github.com/containers/kubernetes-mcp-server/releases)
-
-The executable is named **`kubernetes-mcp-server`**.
+Download pre-built binaries from GitHub releases.
 
 ```bash
-# Example: Linux amd64 (adjust URL to latest release asset)
-wget https://github.com/containers/kubernetes-mcp-server/releases/download/latest/kubernetes-mcp-server-linux-amd64
-chmod +x kubernetes-mcp-server-linux-amd64
-mv kubernetes-mcp-server-linux-amd64 kubernetes-mcp-server
+# Download latest release
+wget https://github.com/openshift/openshift-mcp-server/releases/download/latest/openshift-mcp-server-linux-x86_64
+chmod +x openshift-mcp-server-linux-x86_64
 
-./kubernetes-mcp-server --help
+# Run
+./openshift-mcp-server-linux-x86_64 --toolsets core,openshift
 ```
 
 **Advantages:**
-- No compile step
-- Fast startup
-- Can be placed anywhere on `PATH`
+- No dependencies
+- Fastest startup
+- Can be placed anywhere
 
-### Method 3: Build from Source (OpenShift fork)
-
-Build the latest code from [github.com/openshift/openshift-mcp-server](https://github.com/openshift/openshift-mcp-server):
-
-```bash
-git clone https://github.com/openshift/openshift-mcp-server.git
-cd openshift-mcp-server
-make build
-# → ./kubernetes-mcp-server
-```
-
-Use with the SRE agent demo:
-
-```json
-"command": "/path/to/openshift-mcp-server/kubernetes-mcp-server",
-"args": ["--port", "", "--config", "/path/to/openshift-mcp-server-demo/agents/sre/sre-agent.toml"]
-```
-
-**Full guide:** [Build from Source](build-from-source.md) — Go version, all platforms, mcp-inspector, troubleshooting.
-
-**Advantages:**
-- Latest OpenShift fork changes
-- Required for contributing or testing unreleased toolsets
-- Reproducible local binary for demos
-
-### Method 4: Docker
+### Method 3: Docker
 
 Run in a container for isolation and consistency.
 
@@ -101,7 +63,7 @@ docker run -v ~/.kube/config:/kubeconfig:ro \
 - Consistent across machines
 - Easy to manage
 
-### Method 5: Python (uvx)
+### Method 4: Python (uvx)
 
 Alternative for Python environments.
 
@@ -373,8 +335,6 @@ kubectl cluster-info
 
 ## Next Steps
 
-- **Build from source:** [Build from Source](build-from-source.md)
-- **SRE agent demo:** [SRE Agent Setup](sre-agent.md)
 - Configure for [Cursor Integration](cursor-integration.md)
 - Explore [SRE Workflows](../workflows/cluster-health.md)
 - Review [Configuration Reference](configuration.md)
