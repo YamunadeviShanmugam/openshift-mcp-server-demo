@@ -1,8 +1,8 @@
 # SRE RCA Report Output
 
 The OpenShift SRE agent (`agents/sre/sre-agent.toml`) **always writes** RCA reports here as
-markdown files — for full cluster RCAs, component drill-downs (etcd, ingress, …), must-gather,
-and Prow analysis. Chat-only summaries are not acceptable; the agent must write the file before replying.
+markdown files — for full cluster RCAs, component drill-downs (etcd, ingress, …), and must-gather
+analysis using **kubernetes-mcp-server MCP tools only**. Chat-only summaries are not acceptable; the agent must write the file before replying.
 
 ## Naming convention
 
@@ -11,7 +11,6 @@ and Prow analysis. Chat-only summaries are not acceptable; the agent must write 
 | Live cluster (full) | `live-rca-{cluster}-{YYYY-MM-DD}.md` | `live-rca-rg-070901-2026-09-11.md` |
 | Live cluster (scoped) | `live-rca-{cluster}-{scope}-{YYYY-MM-DD}.md` | `live-rca-rg-070901-etcd-2026-09-11.md` |
 | Must-gather | `mustgather-rca-{cluster}-{YYYY-MM-DD}.md` | `mustgather-rca-pkhblocphcprod-2025-08-12.md` |
-| Prow CI job | `prow-rca-{job-short}-{build_id}.md` | `prow-rca-upgrade-aws-1234567890.md` |
 
 - `{cluster}` — short name from ClusterVersion or API server hostname (lowercase, dots → hyphens)
 - Same cluster + same date → append `-HHMM` (UTC) to avoid overwrite

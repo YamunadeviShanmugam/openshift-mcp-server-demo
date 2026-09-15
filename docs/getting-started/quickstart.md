@@ -1,18 +1,21 @@
-# Quick Start — SRE Agent Demo (one flow)
+# Quick Start — SRE Agent Demo
 
-Single setup path for the demo: **clone MCP server → clone demo → build & apply config**.
+Single setup path: **clone MCP server → clone demo → apply config**.
+
+!!! tip "Generic MCP server only?"
+    See the **[MCP Server](../mcp-server/index.md)** tab for CLI-based setup.
 
 ## Prerequisites
 
 - **Go** and **make** (to build the MCP server)
 - **Git**
-- OpenShift/Kubernetes **kubeconfig** (default: `~/.kube/config`)
+- OpenShift/Kubernetes **kubeconfig** (absolute path) and **`oc` CLI**
 - **Cursor IDE**
 
 Verify cluster access:
 
 ```bash
-kubectl get nodes
+oc get nodes
 ```
 
 ## Step 1 — Clone and build openshift-mcp-server
@@ -32,11 +35,9 @@ Smoke test (optional):
 npx @modelcontextprotocol/inspector@latest $(pwd)/kubernetes-mcp-server
 ```
 
-More build details: [Build from Source](build-from-source.md)
+Build details: [MCP Server — Build from Source](../mcp-server/build-from-source.md)
 
 ## Step 2 — Clone the demo repo
-
-In a sibling directory (or anywhere you prefer):
 
 ```bash
 cd ..
@@ -48,37 +49,40 @@ Demo layout:
 
 ```text
 agents/sre/
-├── sre-agent.toml          # MCP toolsets, prompts, security
-├── conf.d/00-local.toml    # kubeconfig = ~/.kube/config
+├── sre-agent.toml          # MCP toolsets, security, loads conf.d/
+├── mcp.json.example        # Cursor template
+├── conf.d/                 # prompts + server instructions
 └── reports/                # RCA reports written here
 ```
 
-Optional — different kubeconfig on your machine only:
+Optional — personal overrides (gitignored):
 
 ```bash
 cp agents/sre/conf.d/99-local.toml.example agents/sre/conf.d/99-local.toml
-# edit path — gitignored
+# edit kubeconfig or other settings
 ```
 
 ## Step 3 — Apply MCP config (Cursor)
 
-Edit **`~/.cursor/mcp.json`**. Use **absolute paths** for your machine:
+Edit **`~/.cursor/mcp.json`**. Use **absolute paths**:
 
 ```json
 {
   "mcpServers": {
-    "kubernetes-mcp-server": {
+    "openshift-mcp-server": {
       "command": "/ABSOLUTE/PATH/openshift-mcp-server/kubernetes-mcp-server",
       "args": [
         "--port",
         "",
+        "--kubeconfig",
+        "/ABSOLUTE/PATH/to/your/kubeconfig",
         "--config",
         "/ABSOLUTE/PATH/openshift-mcp-server-demo/agents/sre/sre-agent.toml",
         "--log-file",
         "/tmp/kubernetes-mcp-server.log"
       ],
       "env": {
-        "KUBECONFIG": "/Users/YOU/.kube/config"
+        "KUBECONFIG": "/ABSOLUTE/PATH/to/your/kubeconfig"
       }
     }
   }
@@ -89,7 +93,11 @@ Edit **`~/.cursor/mcp.json`**. Use **absolute paths** for your machine:
 |------|-----|
 | `command` | Binary from **Step 1** (`make build`) |
 | `--port ""` | stdio mode for Cursor |
-| `--config` | SRE agent TOML from **Step 2** |
+| `--kubeconfig` | **Required** — absolute path to your kubeconfig |
+| `--config` | **`sre-agent.toml`** — toolsets, prompts (`conf.d/`), security |
+| `--log-file` | Required in stdio mode |
+
+Toolsets, `list_output`, denied resources, and MCP prompts load from **`sre-agent.toml`** and **`conf.d/`** — do not duplicate in `--toolsets`.
 
 Copy-paste template: [`agents/sre/mcp.json.example`](../../agents/sre/mcp.json.example)
 
@@ -118,18 +126,34 @@ Expected: analysis + file such as
 
 ## MCP prompts
 
-| Prompt | Purpose |
+Full catalog: **[Prompt Examples](../sre-agent/prompt-examples.md)**
+
+| Prompt | Example |
 |--------|---------|
-| `/live-cluster-rca` | Full live cluster RCA |
-| `/live-etcd-analysis` | etcd health |
-| `/live-component-rca <name>` | Scoped analysis |
-| `/must-gather-rca <dir>` | Offline bundle |
+| `/live-cluster-rca` | `/live-cluster-rca API 503 after worker reboot` |
+| `/live-etcd-analysis` | `/live-etcd-analysis slow API and etcd operator Degraded` |
+| `/live-component-rca <name>` | `/live-component-rca ingress` |
+| `/must-gather-rca <dir>` | `/must-gather-rca /tmp/mg-extracted/.../registry-sha-dir/` |
+
+### More natural-language examples
+
+```
+List ClusterOperators that are not Available=True and summarize impact.
+```
+
+```
+Node worker-2 is NotReady — build a timeline from events and kubelet logs.
+```
+
+```
+Find all pods in ImagePullBackOff cluster-wide and group by likely cause.
+```
 
 ## ✅ Checklist
 
 - [ ] `openshift-mcp-server/kubernetes-mcp-server` exists (`make build`)
 - [ ] `openshift-mcp-server-demo/agents/sre/sre-agent.toml` exists
-- [ ] `~/.cursor/mcp.json` points to both paths above
+- [ ] `~/.cursor/mcp.json` has absolute paths for binary, kubeconfig, and config
 - [ ] Cursor workspace = **openshift-mcp-server-demo**
 - [ ] MCP connected in Cursor settings
 - [ ] Report saved under `agents/sre/reports/`
@@ -138,13 +162,16 @@ Expected: analysis + file such as
 
 | Problem | Fix |
 |---------|-----|
-| MCP not connected | Valid JSON; restart Cursor; `tail -f /tmp/kubernetes-mcp-server.log` |
-| Wrong cluster | `kubectl config current-context`; set `KUBECONFIG` in `mcp.json` |
+| Help text in MCP log, then disconnect | Startup crash — `tail -20 /tmp/kubernetes-mcp-server.log` |
+| `stat ~/.kube/config: no such file` | Add `--kubeconfig` with absolute path to `mcp.json` |
+| MCP not connected | Valid JSON; restart Cursor |
+| Wrong cluster | `oc config current-context`; fix `--kubeconfig` |
 | No report file | Open demo repo as Cursor workspace |
 | Build fails | Match Go version in `openshift-mcp-server/go.mod` |
 
 ## Next steps
 
+- [Prompt Examples](../sre-agent/prompt-examples.md) — full copy-paste catalog
 - [SRE Agent Setup](sre-agent.md) — prompts, reports, security
-- [Build from Source](build-from-source.md) — multi-platform builds, mcp-inspector
+- [Cursor Integration](cursor-integration.md)
 - [Cluster Health Workflow](../workflows/cluster-health.md)

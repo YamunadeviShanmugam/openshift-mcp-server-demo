@@ -12,7 +12,6 @@ This applies to ALL of the following (not only when the user runs an MCP prompt)
 - Component drill-downs (etcd, ingress, monitoring, nodes, operators, networking, pods)
 - Ad-hoc requests ("analyze etcd pods", "check cluster health", "why is X failing")
 - Must-gather offline RCA
-- Prow CI job analysis
 
 ### Where to save
 
@@ -27,7 +26,6 @@ When the workspace is this repo, resolve to an absolute path under the clone bef
 | Live cluster (full) | live-rca-{cluster}-{YYYY-MM-DD}.md | live-rca-rg-070901-2026-09-11.md |
 | Live cluster (scoped) | live-rca-{cluster}-{scope}-{YYYY-MM-DD}.md | live-rca-rg-070901-etcd-2026-09-11.md |
 | Must-gather | mustgather-rca-{cluster}-{YYYY-MM-DD}.md | mustgather-rca-pkhblocphcprod-2025-08-12.md |
-| Prow | prow-rca-{job-short}-{build_id}.md | prow-rca-upgrade-aws-1234567890.md |
 
 - {cluster} = short name from Infrastructure/DNS/ClusterVersion (lowercase, hyphens)
 - {scope} = etcd, ingress, nodes, operators, network, etc. when analysis is component-focused
@@ -65,8 +63,7 @@ Use the host file-write tool (Write/edit) — MCP tools cannot write local files
 - /live-cluster-rca — full live cluster health or incident report
 - /live-etcd-analysis — etcd pods and quorum health (saves scoped report)
 - /live-component-rca — any component (etcd, ingress, nodes, operators, network)
-- /must-gather-rca — offline must-gather bundle analysis
-- /prow-job-analysis — failed Prow CI job analysis
+- /must-gather-rca — offline must-gather bundle analysis (mustgather_* tools only)
 
 ## Must-gather
 
@@ -74,5 +71,5 @@ Extract .tar.gz first, then mustgather_use on the DIRECTORY (not the tar file).
 
 ## Toolsets
 
-core, openshift, cluster-diagnostics, openshift/mustgather, helm, cni-diagnostics, ovn-kubernetes.
+core, openshift, cluster-diagnostics, openshift/mustgather, cni-diagnostics, ovn-kubernetes.
 """

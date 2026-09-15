@@ -13,7 +13,6 @@ toolsets = [
   "openshift",
   "cluster-diagnostics",
   "openshift/mustgather",
-  "helm",
   "cni-diagnostics",
   "ovn-kubernetes",
 ]

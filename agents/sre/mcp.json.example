@@ -1,18 +1,21 @@
 {
   "mcpServers": {
-    "kubernetes-mcp-server": {
+    "openshift-mcp-server": {
       "command": "/ABSOLUTE/PATH/openshift-mcp-server/kubernetes-mcp-server",
       "args": [
         "--port",
         "",
+        "--kubeconfig",
+        "/ABSOLUTE/PATH/to/your/kubeconfig",
         "--config",
         "/ABSOLUTE/PATH/openshift-mcp-server-demo/agents/sre/sre-agent.toml",
         "--log-file",
         "/tmp/kubernetes-mcp-server.log"
       ],
       "env": {
-        "KUBECONFIG": "/Users/YOU/.kube/config"
-      }
+        "KUBECONFIG": "/ABSOLUTE/PATH/to/your/kubeconfig"
+      },
+      "description": "OpenShift SRE agent — sre-agent.toml (toolsets, prompts, security) + conf.d/"
     }
   }
 }

@@ -1,154 +1,58 @@
 # Configuration Reference
 
-Complete reference guide for configuring the OpenShift MCP Server.
+This page replaces the outdated `config.yaml` examples. Use the guides below instead.
 
-## Configuration File
+## MCP server configuration
 
-The main configuration file is `config.yaml`:
+**[MCP Server — Configuration](../mcp-server/configuration.md)**
 
-```yaml
-server:
-  host: 0.0.0.0
-  port: 3000
-  debug: false
+Covers:
 
-openshift:
-  api_url: https://api.openshift.local:6443
-  api_token: ${OPENSHIFT_TOKEN}
-  insecure_skip_tls_verify: false
+- CLI flags in `~/.cursor/mcp.json` (`--port`, `--kubeconfig`, `--toolsets`, …)
+- TOML config files and drop-in directories
+- Kubeconfig path rules (use absolute paths; `--kubeconfig` wins over TOML)
+- Environment variables (`KUBECONFIG`, `K8S_MCP_CONFIG_PATH`)
 
-logging:
-  level: info
-  format: json
-  output: stdout
+Upstream full reference:
+[containers/kubernetes-mcp-server — configuration.md](https://github.com/containers/kubernetes-mcp-server/blob/main/docs/configuration.md)
 
-tools:
-  enabled:
-    - health_check
-    - cluster_info
-    - pod_management
+## SRE agent configuration
+
+**[SRE Agent Setup](../getting-started/sre-agent.md)**
+
+| File | Purpose |
+|------|---------|
+| [`agents/sre/sre-agent.toml`](../../agents/sre/sre-agent.toml) | Toolsets, security, loads `conf.d/` |
+| [`agents/sre/conf.d/10-server-instructions.toml`](../../agents/sre/conf.d/10-server-instructions.toml) | RCA report rules |
+| [`agents/sre/conf.d/20-prompts.toml`](../../agents/sre/conf.d/20-prompts.toml) | MCP slash prompts |
+| [`agents/sre/mcp.json.example`](../../agents/sre/mcp.json.example) | Cursor `mcp.json` template |
+
+### Example Cursor config (SRE agent)
+
+```json
+{
+  "mcpServers": {
+    "openshift-mcp-server": {
+      "command": "/ABSOLUTE/PATH/openshift-mcp-server/kubernetes-mcp-server",
+      "args": [
+        "--port", "",
+        "--kubeconfig", "/ABSOLUTE/PATH/to/your/kubeconfig",
+        "--config", "/ABSOLUTE/PATH/openshift-mcp-server-demo/agents/sre/sre-agent.toml",
+        "--log-file", "/tmp/kubernetes-mcp-server.log"
+      ]
+    }
+  }
+}
 ```
 
-## Server Configuration
+### Toolsets in `sre-agent.toml`
 
-### Host and Port
-
-```yaml
-server:
-  host: 0.0.0.0
-  port: 3000
+```
+core, config, openshift, cluster-diagnostics, openshift/mustgather, cni-diagnostics, ovn-kubernetes
 ```
 
-- `host`: Bind address (0.0.0.0 for all interfaces)
-- `port`: Port number (default: 3000)
+Edit `sre-agent.toml` to change toolsets — do not duplicate in `--toolsets` when using `--config`.
 
-### Debug Mode
+## Toolsets reference
 
-```yaml
-server:
-  debug: true
-```
-
-Enable debug logging for troubleshooting.
-
-## OpenShift Configuration
-
-### API Connection
-
-```yaml
-openshift:
-  api_url: https://api.openshift.local:6443
-  api_token: ${OPENSHIFT_TOKEN}
-  insecure_skip_tls_verify: false
-```
-
-- `api_url`: OpenShift API endpoint
-- `api_token`: API authentication token
-- `insecure_skip_tls_verify`: Skip SSL verification (not recommended for production)
-
-## Logging Configuration
-
-### Log Levels
-
-```yaml
-logging:
-  level: info
-```
-
-Available levels: `debug`, `info`, `warn`, `error`, `fatal`
-
-### Log Format
-
-```yaml
-logging:
-  format: json
-```
-
-Available formats: `json`, `text`
-
-### Log Output
-
-```yaml
-logging:
-  output: stdout
-```
-
-Can be `stdout`, `stderr`, or file path.
-
-## Tools Configuration
-
-### Enable/Disable Tools
-
-```yaml
-tools:
-  enabled:
-    - health_check
-    - cluster_info
-```
-
-List the tools you want to enable.
-
-## Environment Variables
-
-You can override configuration values with environment variables:
-
-```bash
-export OPENSHIFT_TOKEN="your-token"
-export MCP_PORT=3001
-export MCP_DEBUG=true
-```
-
-## Configuration Validation
-
-Validate your configuration:
-
-```bash
-mcp-server validate --config config.yaml
-```
-
-## Example Configuration
-
-```yaml
-server:
-  host: 0.0.0.0
-  port: 3000
-  debug: false
-
-openshift:
-  api_url: https://api.production.openshift.local:6443
-  api_token: ${OPENSHIFT_TOKEN}
-  insecure_skip_tls_verify: false
-
-logging:
-  level: info
-  format: json
-  output: /var/log/mcp-server.log
-
-tools:
-  enabled:
-    - health_check
-    - cluster_info
-    - pod_management
-    - networking
-    - security
-```
+**[Toolsets Guide](toolsets.md)**

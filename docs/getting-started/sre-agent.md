@@ -1,6 +1,6 @@
 # SRE Agent Setup
 
-This page supplements the **[Quick Start](quickstart.md)** — follow that single flow first.
+Supplements the **[Quick Start](quickstart.md)** — follow that flow first.
 
 ## One demo flow
 
@@ -10,27 +10,29 @@ This page supplements the **[Quick Start](quickstart.md)** — follow that singl
 | **2** | `git clone` this demo repo |
 | **3** | Apply [`agents/sre/mcp.json.example`](../../agents/sre/mcp.json.example) to `~/.cursor/mcp.json` |
 
-Open **openshift-mcp-server-demo** in Cursor. Run `/live-cluster-rca`.
-
-## MCP config template
+## MCP config + `sre-agent.toml`
 
 [`agents/sre/mcp.json.example`](../../agents/sre/mcp.json.example):
 
 ```json
 {
   "mcpServers": {
-    "kubernetes-mcp-server": {
+    "openshift-mcp-server": {
       "command": "/ABSOLUTE/PATH/openshift-mcp-server/kubernetes-mcp-server",
       "args": [
         "--port", "",
+        "--kubeconfig", "/ABSOLUTE/PATH/to/your/kubeconfig",
         "--config", "/ABSOLUTE/PATH/openshift-mcp-server-demo/agents/sre/sre-agent.toml",
         "--log-file", "/tmp/kubernetes-mcp-server.log"
       ],
-      "env": { "KUBECONFIG": "/Users/YOU/.kube/config" }
+      "env": { "KUBECONFIG": "/ABSOLUTE/PATH/to/your/kubeconfig" }
     }
   }
 }
 ```
+
+!!! warning "Always set `--kubeconfig`"
+    Use an **absolute path**. The CLI flag overrides any path in TOML.
 
 ## What's in `agents/sre/`
 
@@ -38,41 +40,20 @@ Open **openshift-mcp-server-demo** in Cursor. Run `/live-cluster-rca`.
 |------|---------|
 | `sre-agent.toml` | Toolsets, denied resources, loads `conf.d/` |
 | `conf.d/10-server-instructions.toml` | Mandatory RCA report output |
-| `conf.d/20-prompts.toml` | MCP prompts |
-| `conf.d/00-local.toml` | Default kubeconfig |
+| `conf.d/20-prompts.toml` | MCP prompts (`/live-cluster-rca`, …) |
+| `conf.d/99-local.toml.example` | Optional personal overrides (gitignored) |
 | `reports/` | Saved RCA files |
 
-## Demo script (presentations)
-
-| # | Show |
-|---|------|
-| 1 | `make build` → `kubernetes-mcp-server` binary |
-| 2 | `agents/sre/` tree + `mcp.json.example` |
-| 3 | Cursor MCP connected |
-| 4 | `/live-cluster-rca` → new file in `agents/sre/reports/` |
-
-## Health-check prompt
+### Toolsets in `sre-agent.toml`
 
 ```
-Give me a quick health check of my OpenShift cluster:
-1. How many nodes and what's their status?
-2. Are there nodes with memory or CPU pressure?
-3. Which namespaces have the most pod activity?
-4. Show me any pods in CrashLoopBackOff or Error states
+core, config, openshift, cluster-diagnostics, openshift/mustgather, cni-diagnostics, ovn-kubernetes
 ```
 
-## Must-gather (offline)
-
-```bash
-tar -xzf must-gather*.tar.gz -C /tmp/mg-extracted/
-```
-
-```
-/must-gather-rca /tmp/mg-extracted/.../registry-sha-dir/
-```
+Edit `sre-agent.toml` to add/remove toolsets — no need for `--toolsets` in `mcp.json`.
 
 ## Next steps
 
-- [Build from Source](build-from-source.md) — multi-platform build, mcp-inspector
+- [Prompt Examples](../sre-agent/prompt-examples.md)
 - [Cluster Health Workflow](../workflows/cluster-health.md)
 - [Must-Gather Analysis](../advanced/must-gather.md)

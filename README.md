@@ -10,17 +10,19 @@ This repository contains comprehensive SRE-focused documentation and best practi
 
 ## 📚 Documentation Structure
 
+Published docs use **two tabs** (MkDocs):
+
+| Tab | Contents |
+|-----|----------|
+| **MCP Server** | Build, install, Cursor stdio, flags/TOML config |
+| **SRE Agent** | Team demo, prompts, RCA reports, workflows |
+
 ```
 📖 SRE Edition Documentation
-├── agents/sre/                  ← OpenShift SRE agent (MCP config, prompts, reports)
-├── Getting Started (5-30 minutes setup)
-│   ├── Quick Start
-│   ├── Installation Guide
-│   ├── Configuration Guide
-│   ├── SRE Agent Setup
-│   └── Cursor Integration
-│
-├── SRE Workflows (Tab-Based)
+├── docs/mcp-server/             ← Generic kubernetes-mcp-server setup
+├── docs/sre-agent/              ← SRE agent overview
+├── agents/sre/                  ← MCP config, prompts, reports (runtime files)
+├── SRE Workflows
 │   ├── Cluster Health Monitoring
 │   ├── Troubleshooting & Debugging
 │   ├── Security & Compliance
@@ -63,8 +65,10 @@ In Cursor chat: `/live-cluster-rca` → report in `agents/sre/reports/`
 
 ## 📖 Documentation
 
-- **SRE Agent**: [Setup Guide](docs/getting-started/sre-agent.md) — prompts, RCA reports, must-gather
-- **Getting Started**: [Quick Start Guide](docs/getting-started/quickstart.md)
+- **MCP Server tab**: [Overview](docs/mcp-server/index.md) — build, Cursor, CLI configuration
+- **SRE Agent tab**: [Overview](docs/sre-agent/index.md) — team demo, prompts, RCA reports
+- **Prompt Examples**: [Copy-paste catalog](docs/sre-agent/prompt-examples.md)
+- **Quick Start**: [SRE Agent Quick Start](docs/getting-started/quickstart.md)
 - **SRE Workflows**:
   - [Cluster Health Monitoring](docs/workflows/cluster-health.md)
   - [Troubleshooting & Debugging](docs/workflows/troubleshooting.md)
@@ -80,13 +84,12 @@ In Cursor chat: `/live-cluster-rca` → report in `agents/sre/reports/`
 - Context switching in natural language
 - Unified dashboard view across clusters
 
-### Comprehensive Toolsets
+### Comprehensive Toolsets (SRE agent)
 - **Core**: Pods, namespaces, events, nodes
-- **Helm**: Chart management and releases
-- **Tekton**: Pipeline automation
 - **OpenShift**: OpenShift-specific tools
-- **Observability**: Prometheus, Loki, Jaeger integration
-- **Security**: RBAC audit, policy enforcement
+- **Cluster diagnostics**: Node debugging and stats
+- **Must-gather**: Offline bundle analysis
+- **CNI / OVN**: Network diagnostics
 
 ### Enterprise-Ready
 - Read-only mode (prevents accidental changes)
@@ -146,7 +149,7 @@ In Cursor chat: `/live-cluster-rca` → report in `agents/sre/reports/`
 | Binary | Production | 2 minutes |
 | Docker | CI/CD | 5 minutes |
 
-See [Installation Guide](docs/getting-started/installation.md) for details.
+See [MCP Server Installation](docs/mcp-server/installation.md) for details.
 
 ## 🎓 Learning Path
 

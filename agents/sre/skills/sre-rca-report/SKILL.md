@@ -25,7 +25,6 @@ Every RCA must be written to disk — not chat-only.
 | Live cluster (full) | `agents/sre/reports/live-rca-{cluster}-{YYYY-MM-DD}.md` |
 | Live cluster (scoped) | `agents/sre/reports/live-rca-{cluster}-{scope}-{YYYY-MM-DD}.md` |
 | Must-gather | `agents/sre/reports/mustgather-rca-{cluster}-{YYYY-MM-DD}.md` |
-| Prow job | `agents/sre/reports/prow-rca-{job}-{build_id}.md` |
 
 Rules:
 - Create `agents/sre/reports/` if it does not exist

@@ -1,6 +1,6 @@
 # Team Onboarding Guide
 
-Welcome! Follow **one setup flow** — no npm vs binary vs Docker choices for the demo.
+Welcome! Follow **one setup flow** — build from source + SRE agent config.
 
 ## Demo setup (everyone)
 
@@ -18,7 +18,7 @@ Then: open **openshift-mcp-server-demo** in Cursor → `/live-cluster-rca`
 2. Run health-check prompt or `/live-cluster-rca` (10 min)
 3. Open saved report in `agents/sre/reports/` (5 min)
 
-Optional reading: [SRE Agent Setup](docs/getting-started/sre-agent.md)
+Optional reading: [SRE Agent Setup](docs/getting-started/sre-agent.md) · [Prompt Examples](docs/sre-agent/prompt-examples.md)
 
 ## Day 2 — Pick a workflow
 
@@ -30,7 +30,6 @@ Optional reading: [SRE Agent Setup](docs/getting-started/sre-agent.md)
 ## Kickoff demo script (team leads)
 
 ```bash
-# Terminal — show live
 git clone https://github.com/openshift/openshift-mcp-server.git
 cd openshift-mcp-server && make build
 ls -la kubernetes-mcp-server
@@ -45,7 +44,8 @@ In Cursor: show MCP connected → run `/live-cluster-rca` → open new file in `
 
 - [ ] `kubernetes-mcp-server` binary built
 - [ ] Demo repo cloned
-- [ ] `~/.cursor/mcp.json` configured from `mcp.json.example`
+- [ ] `~/.cursor/mcp.json` configured from `mcp.json.example` (absolute paths)
+- [ ] `--kubeconfig` set to your kubeconfig file
 - [ ] Cursor workspace = demo repo
 - [ ] At least one report in `agents/sre/reports/`
 
@@ -55,15 +55,21 @@ In Cursor: show MCP connected → run `/live-cluster-rca` → open new file in `
 No for the demo — build from the OpenShift fork with `make build`.
 
 **Where is the config?**  
-`agents/sre/sre-agent.toml` in this repo + `~/.cursor/mcp.json` pointing to the binary and that file.
+`agents/sre/sre-agent.toml` + `~/.cursor/mcp.json` with `--kubeconfig`, `--config`, and `--port ""`.
 
 **Different kubeconfig?**  
-Copy `agents/sre/conf.d/99-local.toml.example` → `99-local.toml` (gitignored).
+Set `--kubeconfig` in `mcp.json`, or copy `agents/sre/conf.d/99-local.toml.example` → `99-local.toml` (use absolute path in TOML).
+
+**MCP shows help text then disconnects?**  
+Startup failed — usually missing kubeconfig. Check `tail -20 /tmp/kubernetes-mcp-server.log`.
+
+**Generic MCP server without SRE agent?**  
+See [MCP Server tab](docs/mcp-server/index.md) in docs.
 
 ## Resources
 
-- [Quick Start](docs/getting-started/quickstart.md)
-- [Build from Source](docs/getting-started/build-from-source.md)
+- [SRE Agent Quick Start](docs/getting-started/quickstart.md)
+- [MCP Server Overview](docs/mcp-server/index.md)
 - [openshift/openshift-mcp-server](https://github.com/openshift/openshift-mcp-server)
 
 ---
