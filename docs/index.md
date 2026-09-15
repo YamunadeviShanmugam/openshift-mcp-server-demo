@@ -1,84 +1,65 @@
 # OpenShift MCP Server - SRE Edition
 
-Welcome to the **OpenShift MCP Server** documentation - a native Go-based Model Context Protocol server enabling AI assistants to interact with Kubernetes and OpenShift clusters through natural language.
+Welcome to the **OpenShift MCP Server** documentation — a native Go-based Model Context Protocol server enabling AI assistants to interact with Kubernetes and OpenShift clusters through natural language.
 
 ## 🎯 What is OpenShift MCP Server?
 
-A **direct Kubernetes API client** (not a kubectl wrapper) with **18+ specialized toolsets** for advanced cluster operations.
+A **direct Kubernetes API client** (not a kubectl wrapper). The upstream server supports many optional toolsets; this demo repo ships a **sample SRE agent** with a curated subset for live cluster diagnostics, must-gather RCA, and network troubleshooting.
 
 ## 📚 Quick Navigation
 
 | | |
 |---|---|
-| **New Users** | [Quick Start (5 min)](getting-started/quickstart.md) |
-| **Install** | [Installation Guide](getting-started/installation.md) |
-| **Config** | [Configuration](getting-started/configuration.md) |
+| **Start here** | [Quick Start](quickstart.md) — build + `--toolsets` in Cursor |
+| **MCP Server** | [Generic server setup](mcp-server/index.md) — CLI flags only |
+| **Sample Agent** | [SRE Agent](sre-agent/index.md) — `--config` + `sre-agent.toml` |
 | **Workflows** | [SRE Workflows](workflows/cluster-health.md) |
+| **All toolsets** | [Toolsets Guide](reference/toolsets.md) |
 
-## 🛠️ 18+ Available Toolsets
+## 🛠️ Sample agent toolsets
 
-### Core & Diagnostics
-`core` • `cluster-diagnostics` • `openshift`
+Configured in [`agents/sre/sre-agent.toml`](https://github.com/YamunadeviShanmugam/openshift-mcp-server-demo/blob/main/agents/sre/sre-agent.toml):
 
-### Virtualization & Compute
-`kubevirt` • `vm_troubleshoot` • `helm` • `tekton`
+| Toolset | Purpose |
+|---------|---------|
+| `core` | Pods, events, nodes, resources |
+| `config` | Kubeconfig contexts, targets |
+| `openshift` | Projects, OpenShift resources |
+| `cluster-diagnostics` | Node debug, stats, logs |
+| `openshift/mustgather` | Offline must-gather RCA |
+| `cni-diagnostics` | conntrack, iptables, tcpdump, … |
+| `ovn-kubernetes` | OVN trace, flows, ovs tools |
 
-### Networking
-`cni-diagnostics` • `ovn-kubernetes` • `netedge` • `netobserv`
+MCP prompts and RCA report rules live in `agents/sre/conf.d/`. Enable other toolsets in your own TOML — see [Toolsets Guide](reference/toolsets.md).
 
-### Service Mesh & Multi-tenancy
-`ossm` • `kcp`
+## 💡 Example prompts
 
-### Observability & Monitoring
-`observability/metrics` • `observability/logs` • `observability/traces` • `observability/otelcol`
+**Cluster health**: "Show me cluster health — nodes, resource pressure, pods in error, namespace usage"
 
-### Backup & Recovery
-`oadp`
+**Live RCA**: `/live-cluster-rca` (saves report to `agents/sre/reports/`)
 
-## 🚀 30-Second Setup
+**Must-gather**: `/must-gather-rca` with path to extracted bundle directory
 
-```bash
-# Install
-npx -y openshift-mcp-server@latest
+**Network**: "Trace pod-to-service connectivity using OVN tools"
 
-# Add to Cursor (~/.cursor/mcp.json)
-{
-  "openshift-mcp-server": {
-    "command": "npx",
-    "args": ["-y", "openshift-mcp-server@latest"],
-    "env": {"KUBECONFIG": "~/.kube/config"}
-  }
-}
-
-# Use in Cursor
-"Show me cluster health and any pods in error state"
-```
-
-## 💡 Example Workflows
-
-**Cluster Health**: "How is my cluster? Show nodes, pod status, and resource usage"
-
-**VM Troubleshooting**: "Why is my VM stuck in Provisioning? How do I fix it?"
-
-**Network Diagnostics**: "Diagnose connectivity issues between namespaces"
-
-**Observability**: "Show me Prometheus metrics and Loki logs for errors"
-
-**Backup**: "Create a backup of my database namespace using OADP"
+Full catalog: [Prompt Examples](sre-agent/prompt-examples.md)
 
 ## 📖 Documentation
 
-- [Getting Started](getting-started/quickstart.md) - Quick Start & Installation
-- [SRE Workflows](workflows/cluster-health.md) - 7 workflow guides
-- [Custom Tools Support](advanced/multi-cluster.md) - Multi-cluster, API, Security
-- [Reference](reference/toolsets.md) - Toolsets, Config, Troubleshooting
+- [Quick Start](quickstart.md) — build + `--toolsets` (no TOML)
+- [MCP Server](mcp-server/index.md) — install, Cursor, flags
+- [Sample Agent](sre-agent/index.md) — `--config`, prompts, RCA reports
+- [SRE Workflows](workflows/cluster-health.md) — 7 workflow guides
+- [Advanced Topics](advanced/must-gather.md) — must-gather, multi-cluster
+- [Reference](reference/toolsets.md) — toolsets, config, FAQ
 
 ## 🔗 Resources
 
-- **Repository**: [openshift/openshift-mcp-server](https://github.com/openshift/openshift-mcp-server)
-- **Docs**: [GitHub Docs](https://github.com/openshift/openshift-mcp-server/tree/main/docs)
-- **Issues**: [GitHub Issues](https://github.com/openshift/openshift-mcp-server/issues)
+- **MCP Server source**: [openshift/openshift-mcp-server](https://github.com/openshift/openshift-mcp-server)
+- **Demo repo**: [openshift-mcp-server-demo](https://github.com/YamunadeviShanmugam/openshift-mcp-server-demo)
+- **Upstream**: [containers/kubernetes-mcp-server](https://github.com/containers/kubernetes-mcp-server)
+- **Protocol**: [modelcontextprotocol.io](https://modelcontextprotocol.io)
 
 ---
 
-[→ Quick Start Guide](getting-started/quickstart.md)
+[→ Quick Start Guide](quickstart.md)

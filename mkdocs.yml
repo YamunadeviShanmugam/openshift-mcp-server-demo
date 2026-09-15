@@ -1,8 +1,9 @@
 site_name: OpenShift MCP Server - SRE Edition
 site_description: AI-Powered OpenShift Operations for Site Reliability Engineers
 site_author: OpenShift MCP Community
-repo_url: https://github.com/openshift/openshift-mcp-server
-repo_name: openshift-mcp-server
+site_url: https://yamunadevishanmugam.github.io/openshift-mcp-server-demo/
+repo_url: https://github.com/YamunadeviShanmugam/openshift-mcp-server-demo
+repo_name: openshift-mcp-server-demo
 edit_uri: edit/main/docs/
 
 theme:
@@ -27,8 +28,7 @@ theme:
   features:
     - navigation.instant
     - navigation.tracking
-    - navigation.tabs
-    - navigation.tabs.sticky
+    - navigation.sections
     - search.suggest
     - search.highlight
     - content.code.copy
@@ -58,11 +58,16 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Getting Started:
-    - Quick Start: getting-started/quickstart.md
-    - Installation: getting-started/installation.md
-    - Configuration: getting-started/configuration.md
-    - Cursor Integration: getting-started/cursor-integration.md
+  - Quick Start: quickstart.md
+  - MCP Server:
+    - Overview: mcp-server/index.md
+    - Build from Source: mcp-server/build-from-source.md
+    - Installation: mcp-server/installation.md
+    - Cursor Integration: mcp-server/cursor-integration.md
+    - Configuration: mcp-server/configuration.md
+  - SRE Agent:
+    - Overview: sre-agent/index.md
+    - Prompt Examples: sre-agent/prompt-examples.md
   - SRE Workflows:
     - Cluster Health Monitoring: workflows/cluster-health.md
     - Troubleshooting & Debugging: workflows/troubleshooting.md
@@ -72,11 +77,11 @@ nav:
     - Observability Setup: workflows/observability.md
     - Incident Response: workflows/incident-response.md
   - Advanced Topics:
+    - Must-Gather Analysis: advanced/must-gather.md
     - Multi-Cluster Management: advanced/multi-cluster.md
     - Custom Toolsets: advanced/custom-toolsets.md
-    - API Reference: advanced/api-reference.md
     - Security Best Practices: advanced/security.md
-    - Must-Gather Analysis: advanced/must-gather.md
+    - API Reference: advanced/api-reference.md
   - Reference:
     - Toolsets Guide: reference/toolsets.md
     - SRE Tools Analysis: reference/sre-tools-analysis.md

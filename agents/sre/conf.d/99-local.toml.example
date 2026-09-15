@@ -1,0 +1,4 @@
+# Optional personal overrides (gitignored via conf.d/.gitignore).
+# Copy to 99-local.toml and set paths that differ from the demo defaults.
+
+# kubeconfig = "/path/to/your/private/kubeconfig"

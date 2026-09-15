@@ -1,0 +1,5 @@
+# Demo local settings — loaded automatically from conf.d/ next to sre-agent.toml.
+#
+# Set kubeconfig via --kubeconfig in ~/.cursor/mcp.json (recommended) or KUBECONFIG env.
+# Do NOT set kubeconfig = "~/.kube/config" here — the server does not expand tilde.
+# For personal overrides, copy conf.d/99-local.toml.example to 99-local.toml (gitignored).

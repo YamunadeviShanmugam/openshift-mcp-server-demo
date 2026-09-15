@@ -1,0 +1,5 @@
+# Generated RCA reports (gitignored)
+live-rca-*.md
+prow-rca-*.md
+mustgather-rca-*.md
+!mustgather-rca-pkhblocphcprod-2025-08-12.md
