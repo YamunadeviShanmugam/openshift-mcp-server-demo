@@ -1,66 +1,45 @@
 # SRE Agent Setup
 
-The demo uses **one setup flow**:
+Sample agent leveraging MCP server.
 
-1. Clone and build [openshift/openshift-mcp-server](https://github.com/openshift/openshift-mcp-server)
+1. Complete **[Quick Start](../../docs/quickstart.md)** — MCP server with **`--toolsets`** (no TOML)
 2. Clone this demo repo
-3. Apply [`mcp.json.example`](mcp.json.example) to `~/.cursor/mcp.json`
+3. Switch to **`--config`** → [`mcp.json.example`](mcp.json.example)
 
-**Start here:** [Quick Start](../../docs/getting-started/quickstart.md)  
-**Docs:** [SRE Agent tab](../../docs/sre-agent/index.md) in MkDocs
+**SRE agent docs:** [SRE Agent overview](../../docs/sre-agent/index.md)
 
 ## What's included
 
 ```
 agents/sre/
-├── sre-agent.toml           # MCP config (toolsets, security)
-├── mcp.json.example         # Cursor MCP template — absolute paths required
-├── conf.d/
-│   ├── 10-server-instructions.toml
-│   └── 20-prompts.toml      # /live-cluster-rca, /must-gather-rca, …
+├── sre-agent.toml           # MCP config (toolsets, security) — used with --config only
+├── mcp.json.example         # Cursor template (--config, not --toolsets)
+├── conf.d/                  # prompts + server instructions
 ├── skills/sre-rca-report/
-└── reports/                 # Generated RCA markdown files
+└── reports/                 # RCA markdown output
 ```
 
-## Cursor config (summary)
+## Cursor config (SRE agent only)
 
-Merge [`mcp.json.example`](mcp.json.example) into `~/.cursor/mcp.json`:
+See **[SRE Agent — Step 2](../../docs/sre-agent/index.md#step-2--switch-to-sre-agent-config-cursor)** for the full `mcp.json` with `--config`.
 
-- Server name → **`openshift-mcp-server`**
-- `command` → built `kubernetes-mcp-server` binary
-- `--kubeconfig` → **absolute path** to your kubeconfig
-- `--config` → this directory's `sre-agent.toml`
-- `--port ""` and `--log-file` → required for Cursor stdio
-
-Do **not** set `kubeconfig = "~/.kube/config"` in TOML — tilde is not expanded.
-
-## Run the demo
+Key change from Quick Start: replace `--toolsets` with:
 
 ```
-/live-cluster-rca
+"--config", "/ABSOLUTE/PATH/openshift-mcp-server-demo/agents/sre/sre-agent.toml"
 ```
-
-Reports → `agents/sre/reports/live-rca-*.md`
-
-## MCP prompts
-
-**[Full prompt examples →](../../docs/sre-agent/prompt-examples.md)**
-
-| Prompt | Example |
-|--------|---------|
-| `/live-cluster-rca` | `/live-cluster-rca API 503 after node reboot` |
-| `/live-etcd-analysis` | `/live-etcd-analysis` |
-| `/live-component-rca <name>` | `/live-component-rca ingress` |
-| `/must-gather-rca <path>` | `/must-gather-rca /tmp/mg-extracted/.../registry-sha-dir/` |
 
 ## Security defaults (`sre-agent.toml`)
 
 - Denies Secret, ConfigMap, ClusterRole, ClusterRoleBinding reads
-- Toolsets: core, openshift, cluster-diagnostics, must-gather, CNI, OVN
+- Disables `configuration_view` tool
+
+## Run the demo
+
+Open **openshift-mcp-server-demo** in Cursor → `/live-cluster-rca` → report in `reports/`.
 
 ## Reference
 
 - [Prompt Examples](../../docs/sre-agent/prompt-examples.md)
-- [Quick Start](../../docs/getting-started/quickstart.md)
-- [MCP Server tab](../../docs/mcp-server/index.md) — generic setup without SRE agent
-- [Cursor Integration](../../docs/getting-started/cursor-integration.md)
+- [Quick Start](../../docs/quickstart.md)
+- [MCP Server](../../docs/mcp-server/index.md) — generic `--toolsets` setup

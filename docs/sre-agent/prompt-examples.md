@@ -243,7 +243,6 @@ Example: [`agents/sre/reports/mustgather-rca-pkhblocphcprod-2025-08-12.md`](../.
 
 ## Related
 
-- [Quick Start](../getting-started/quickstart.md)
-- [SRE Agent Setup](../getting-started/sre-agent.md)
+- [Quick Start](../quickstart.md) — MCP server with `--toolsets` first
 - [Must-Gather Analysis](../advanced/must-gather.md)
 - [Toolsets Reference](../reference/toolsets.md)

@@ -10,17 +10,22 @@ This repository contains comprehensive SRE-focused documentation and best practi
 
 ## 📚 Documentation Structure
 
-Published docs use **two tabs** (MkDocs):
+Published docs match the [GitHub Pages site](https://yamunadevishanmugam.github.io/openshift-mcp-server-demo/) — sidebar menu (MkDocs Material):
 
-| Tab | Contents |
-|-----|----------|
-| **MCP Server** | Build, install, Cursor stdio, flags/TOML config |
-| **SRE Agent** | Team demo, prompts, RCA reports, workflows |
+| Section | Contents |
+|---------|----------|
+| **Quick Start** | [Quick Start](docs/quickstart.md) — build + `--toolsets` in `mcp.json` |
+| **MCP Server** | Build, install, Cursor stdio, CLI flags |
+| **SRE Agent** | Sample agent — `--config` + `sre-agent.toml` only here |
+| **SRE Workflows** | Cluster health, troubleshooting, incident response |
+| **Advanced Topics** | Must-gather, multi-cluster, custom toolsets |
+| **Reference** | Toolsets, config, troubleshooting, FAQ |
 
 ```
 📖 SRE Edition Documentation
-├── docs/mcp-server/             ← Generic kubernetes-mcp-server setup
-├── docs/sre-agent/              ← SRE agent overview
+├── docs/quickstart.md           ← MCP server: build + --toolsets
+├── docs/mcp-server/             ← Generic install, Cursor, CLI flags
+├── docs/sre-agent/              ← SRE agent: --config + sre-agent.toml
 ├── agents/sre/                  ← MCP config, prompts, reports (runtime files)
 ├── SRE Workflows
 │   ├── Cluster Health Monitoring
@@ -44,31 +49,23 @@ Published docs use **two tabs** (MkDocs):
     └── FAQ
 ```
 
-## 🚀 Quick Start (one flow)
+## 🚀 Quick Start
 
 ```bash
-# 1. MCP server
 git clone https://github.com/openshift/openshift-mcp-server.git
 cd openshift-mcp-server && make build
-
-# 2. Demo repo
-cd ..
-git clone https://github.com/YamunadeviShanmugam/openshift-mcp-server-demo.git
-cd openshift-mcp-server-demo
 ```
 
-**3. Apply config** — copy paths from [`agents/sre/mcp.json.example`](agents/sre/mcp.json.example) into `~/.cursor/mcp.json`, restart Cursor, open this repo as workspace.
+Add **`--toolsets`** to `~/.cursor/mcp.json` — see **[Quick Start](docs/quickstart.md)**.
 
-Full steps: **[Quick Start Guide](docs/getting-started/quickstart.md)**
-
-In Cursor chat: `/live-cluster-rca` → report in `agents/sre/reports/`
+For the sample SRE agent (`--config`, `/live-cluster-rca`, reports): **[SRE Agent](docs/sre-agent/index.md)**.
 
 ## 📖 Documentation
 
-- **MCP Server tab**: [Overview](docs/mcp-server/index.md) — build, Cursor, CLI configuration
-- **SRE Agent tab**: [Overview](docs/sre-agent/index.md) — team demo, prompts, RCA reports
+- **MCP Server**: [Overview](docs/mcp-server/index.md) — build, Cursor, CLI configuration
+- **SRE Agent**: [Overview](docs/sre-agent/index.md) — sample agent leveraging MCP server
 - **Prompt Examples**: [Copy-paste catalog](docs/sre-agent/prompt-examples.md)
-- **Quick Start**: [SRE Agent Quick Start](docs/getting-started/quickstart.md)
+- [Quick Start](docs/quickstart.md)
 - **SRE Workflows**:
   - [Cluster Health Monitoring](docs/workflows/cluster-health.md)
   - [Troubleshooting & Debugging](docs/workflows/troubleshooting.md)
@@ -153,7 +150,7 @@ See [MCP Server Installation](docs/mcp-server/installation.md) for details.
 
 ## 🎓 Learning Path
 
-1. **Start**: [Quick Start — one flow](docs/getting-started/quickstart.md) — clone MCP server → clone demo → apply config
+1. **Start**: [Quick Start](docs/quickstart.md) — clone MCP server → clone demo → apply config
 2. **Learn**: [SRE Workflows](#-sre-workflows-at-a-glance)
 3. **Advanced**: [Must-Gather Analysis](docs/advanced/must-gather.md)
 
@@ -161,7 +158,7 @@ See [MCP Server Installation](docs/mcp-server/installation.md) for details.
 
 - **OpenShift fork (build source):** [openshift/openshift-mcp-server](https://github.com/openshift/openshift-mcp-server) — `make build` → `kubernetes-mcp-server`
 - **Upstream:** [containers/kubernetes-mcp-server](https://github.com/containers/kubernetes-mcp-server)
-- **Build guide:** [Build from Source](docs/getting-started/build-from-source.md)
+- **Build guide:** [MCP Server — Build from Source](docs/mcp-server/build-from-source.md)
 - **Model Context Protocol:** [modelcontextprotocol.io](https://modelcontextprotocol.io)
 
 ## 💡 Pro Tips
@@ -217,6 +214,6 @@ Rapid detection, diagnosis, mitigation, and post-mortems
 
 ---
 
-**Get Started Now**: [Quick Start Guide →](docs/getting-started/quickstart.md)
+**Get Started Now**: [Quick Start Guide →](docs/quickstart.md)
 
 **Built with ❤️ for SREs**

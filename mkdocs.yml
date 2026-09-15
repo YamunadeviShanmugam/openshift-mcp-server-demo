@@ -1,8 +1,9 @@
-site_name: OpenShift MCP Server
-site_description: Kubernetes and OpenShift MCP server — build, configure, and run with Cursor
+site_name: OpenShift MCP Server - SRE Edition
+site_description: AI-Powered OpenShift Operations for Site Reliability Engineers
 site_author: OpenShift MCP Community
-repo_url: https://github.com/openshift/openshift-mcp-server
-repo_name: openshift-mcp-server
+site_url: https://yamunadevishanmugam.github.io/openshift-mcp-server-demo/
+repo_url: https://github.com/YamunadeviShanmugam/openshift-mcp-server-demo
+repo_name: openshift-mcp-server-demo
 edit_uri: edit/main/docs/
 
 theme:
@@ -27,8 +28,7 @@ theme:
   features:
     - navigation.instant
     - navigation.tracking
-    - navigation.tabs
-    - navigation.tabs.sticky
+    - navigation.sections
     - search.suggest
     - search.highlight
     - content.code.copy
@@ -58,35 +58,33 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Quick Start: quickstart.md
   - MCP Server:
     - Overview: mcp-server/index.md
     - Build from Source: mcp-server/build-from-source.md
     - Installation: mcp-server/installation.md
     - Cursor Integration: mcp-server/cursor-integration.md
     - Configuration: mcp-server/configuration.md
-    - Toolsets: reference/toolsets.md
-    - FAQ: reference/faq.md
   - SRE Agent:
     - Overview: sre-agent/index.md
-    - Quick Start: getting-started/quickstart.md
     - Prompt Examples: sre-agent/prompt-examples.md
-    - Setup Guide: getting-started/sre-agent.md
-    - Cursor Integration: getting-started/cursor-integration.md
-    - Workflows:
-      - Cluster Health: workflows/cluster-health.md
-      - Troubleshooting: workflows/troubleshooting.md
-      - Security & Compliance: workflows/security-compliance.md
-      - Performance Tuning: workflows/performance-tuning.md
-      - Disaster Recovery: workflows/disaster-recovery.md
-      - Observability: workflows/observability.md
-      - Incident Response: workflows/incident-response.md
-    - Advanced:
-      - Must-Gather Analysis: advanced/must-gather.md
-      - Multi-Cluster: advanced/multi-cluster.md
-      - Custom Toolsets: advanced/custom-toolsets.md
-      - Security: advanced/security.md
-      - API Reference: advanced/api-reference.md
-    - Reference:
-      - SRE Tools Analysis: reference/sre-tools-analysis.md
-      - Configuration Reference: reference/configuration.md
-      - Troubleshooting: reference/troubleshooting.md
+  - SRE Workflows:
+    - Cluster Health Monitoring: workflows/cluster-health.md
+    - Troubleshooting & Debugging: workflows/troubleshooting.md
+    - Security & Compliance: workflows/security-compliance.md
+    - Performance Tuning: workflows/performance-tuning.md
+    - Disaster Recovery: workflows/disaster-recovery.md
+    - Observability Setup: workflows/observability.md
+    - Incident Response: workflows/incident-response.md
+  - Advanced Topics:
+    - Must-Gather Analysis: advanced/must-gather.md
+    - Multi-Cluster Management: advanced/multi-cluster.md
+    - Custom Toolsets: advanced/custom-toolsets.md
+    - Security Best Practices: advanced/security.md
+    - API Reference: advanced/api-reference.md
+  - Reference:
+    - Toolsets Guide: reference/toolsets.md
+    - SRE Tools Analysis: reference/sre-tools-analysis.md
+    - Configuration Reference: reference/configuration.md
+    - Troubleshooting: reference/troubleshooting.md
+    - FAQ: reference/faq.md

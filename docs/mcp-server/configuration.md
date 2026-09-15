@@ -108,7 +108,4 @@ See [Toolsets Reference](../reference/toolsets.md).
 | `KUBECONFIG` | Kubeconfig path (when no `--kubeconfig` / TOML path) |
 | `K8S_MCP_CONFIG_PATH` | Default config file if `--config` omitted |
 
-## SRE agent TOML
-
-The team demo uses `agents/sre/sre-agent.toml` plus `conf.d/` drop-ins for prompts and
-report instructions. See the **[SRE Agent](../sre-agent/index.md)** tab.
+For the sample SRE agent (`sre-agent.toml`, prompts, RCA reports), use **`--config`** — documented only under **[SRE Agent](../sre-agent/index.md)**.

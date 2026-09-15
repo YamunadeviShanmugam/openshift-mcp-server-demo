@@ -81,12 +81,12 @@ Configure Cursor to run **kubernetes-mcp-server** in stdio mode.
 | Help text in MCP log, then disconnect | Process crashed on startup — read log file |
 | `Connection closed` (-32000) | Usually bad kubeconfig path or invalid JSON in `mcp.json` |
 | Permission errors | `oc auth can-i get pods -A` |
-| Default toolsets only | Add `--toolsets` or `--config` with toolsets |
+| Default toolsets only | Add `--toolsets` — see [Configuration](configuration.md) |
 
-## SRE agent demo
+## Sample agent
 
 For MCP prompts (`/live-cluster-rca`) and saved RCA reports, use the
-**[SRE Agent](../sre-agent/index.md)** tab instead.
+**[SRE Agent](../sre-agent/index.md)** section in the sidebar menu instead.
 
 ## Next steps
 

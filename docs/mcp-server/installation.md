@@ -3,7 +3,7 @@
 Alternative ways to install **kubernetes-mcp-server** without building from source.
 
 For the **team SRE demo**, always build from source — see the
-**[SRE Agent Quick Start](../getting-started/quickstart.md)**.
+For the sample SRE agent (`--config`), see **[SRE Agent](../sre-agent/index.md)**.
 
 For generic MCP server use, pick one method below.
 
