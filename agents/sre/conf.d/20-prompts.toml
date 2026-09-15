@@ -1,0 +1,362 @@
+[[prompts]]
+name        = "live-cluster-rca"
+title       = "Live Cluster RCA Report"
+description = "Run a live OpenShift cluster health/incident analysis and produce a shareable RCA report with chain of events, primary and secondary causes, impact, and remediation."
+
+[[prompts.arguments]]
+name        = "incident_context"
+description = "Optional: brief description of the incident or symptoms (e.g. 'API 503 after node reboot', 'pods CrashLoopBackOff in openshift-ingress')"
+required    = false
+
+[[prompts.messages]]
+role    = "user"
+content = """
+Perform a live cluster RCA and produce a **well-formatted shareable report**.
+
+Incident context (if any): {{incident_context}}
+
+## Phase 1 — Collect data (kubernetes-mcp-server tools only)
+
+Run these tools and synthesize findings:
+
+1. **Nodes** — `resources_list` (v1 Node), `nodes_top`
+2. **Pods** — `pods_list`, `pods_top`; identify Failed, CrashLoopBackOff, Pending, ImagePullBackOff
+3. **Events** — `events_list` (type=Warning); prioritize: Rebooted, NodeNotReady, BackOff, FailedMount, Unhealthy, ProbeError
+4. **Operators** — `resources_list` (config.openshift.io/v1 ClusterOperator, ClusterVersion)
+5. **etcd** — `pods_list_in_namespace` (openshift-etcd); `pods_exec` with etcdctl: endpoint health, member list, endpoint status
+6. **Logs** — `pods_log` on degraded operator pods and any CrashLoopBackOff pods
+
+## Phase 2 — Build chain of events
+
+- Order events chronologically (earliest **trigger** first)
+- Each step: cause → effect (what enabled the next step)
+- Separate **primary cause** (initiating event) from **symptoms** (503, NodeNotReady, BackOff)
+- Include mermaid flowchart TD and numbered timeline table
+
+## Phase 3 — Write report (use ALL sections)
+
+### Header metadata table
+Report ID, cluster name, OCP version, source=live cluster, analysis time, severity, status
+
+### 1. Executive Summary
+3–5 sentences. State primary cause and current cluster health.
+
+### 2. Chain of Events
+- mermaid flowchart (trigger → cascade → final impact)
+- Timeline table: # | Time | Event | Component | Impact
+- One-line causal chain
+
+### 3. Primary Root Cause
+Table: root cause, evidence (event/log/operator message), mechanism, why it mattered
+Subsection: What Was NOT the root cause (etcd, network, capacity)
+
+### 4. Secondary / Contributing Causes
+Table grouped by: operator instability, monitoring, etcd event bloat, registry/image pull, network
+Only include causes supported by evidence from this analysis.
+
+### 5. Impact Assessment
+Table: Area | Impact | Duration
+
+### 6. Cluster State at Analysis
+Nodes table, etcd summary, degraded operators, problem pods
+
+### 7. Recommended Remediation
+P0 (immediate), P1 (short-term), P2 (preventive) — actionable checkboxes
+
+### 8. Shareable Workflow — Live Cluster
+List every MCP tool used and the order to reproduce this analysis.
+Include share matrix: SRE team (full report), Management (summary + impact), Support (full + kubeconfig context)
+
+### 9. Appendix
+Paste 3–5 key evidence snippets (event messages, operator conditions, log lines)
+
+## Phase 4 — Save report document (mandatory)
+
+1. Write the **complete** report (all sections above) to a markdown file using the host editor / file-write capability.
+2. Default path: `agents/sre/reports/live-rca-{cluster-short-name}-{YYYY-MM-DD}.md`
+   - Derive cluster name from ClusterVersion or API server hostname (e.g. `pkhblocphcprod` from `api.pkhblocphcprod...`)
+   - Sanitize: lowercase, replace dots/spaces with hyphens
+   - If file exists for same cluster+date, append `-HHMM` (24h UTC)
+3. Template reference: `agents/sre/reports/rca-report-template.md`
+4. Use readable layout: **At a Glance** tables, **Contents** TOC, blockquote one-line chain,
+   critical timeline (5–8 rows) + `<details>` for extended timeline, numbered P0/P1/P2 action tables,
+   collapsible `<details>` appendix evidence blocks
+5. Reply in chat with: absolute path to the saved file, primary cause (one line), current status, top P0 action
+"""
+
+[[prompts.messages]]
+role    = "assistant"
+content = "Starting live cluster RCA. Collecting nodes, pods, events, operators, and etcd health via kubernetes-mcp-server. I will write the full formatted report to agents/sre/reports/ before replying — analysis is not complete until the file is saved."
+
+# ── Live component analysis (etcd, ingress, nodes, etc.) ─────────────────────
+
+[[prompts]]
+name        = "live-etcd-analysis"
+title       = "Live etcd Pod Analysis"
+description = "Analyze etcd static pods, quorum, alarms, and operator status on the live cluster. Saves a scoped RCA report to reports/."
+
+[[prompts.arguments]]
+name        = "incident_context"
+description = "Optional: symptoms or incident context (e.g. 'API 503', 'slow etcd')"
+required    = false
+
+[[prompts.messages]]
+role    = "user"
+content = """
+Analyze etcd on the **live cluster** and save a formatted report.
+
+Incident context (if any): {{incident_context}}
+
+## Collect (kubernetes-mcp-server tools)
+
+1. `resources_get` — ClusterOperator/etcd, ClusterVersion, Infrastructure, DNS
+2. `pods_list_in_namespace` — openshift-etcd
+3. `pods_get` + `pods_top` — each etcd static pod (status, restarts, CPU/memory)
+4. `pods_exec` (container=etcdctl) — endpoint health, endpoint status, member list, alarm list
+5. `pods_log` (container=etcd) — tail logs on leader and one follower
+6. `events_list` — openshift-etcd namespace
+
+## Write report (mandatory)
+
+Save to: `agents/sre/reports/live-rca-{cluster}-etcd-{YYYY-MM-DD}.md`
+Use layout from `agents/sre/reports/rca-report-template.md` (all 9 sections).
+For healthy etcd: Status=Healthy, document evidence (health checks, revision alignment, no alarms).
+
+Reply with absolute path + 2–3 sentence summary.
+"""
+
+[[prompts.messages]]
+role    = "assistant"
+content = "Analyzing live etcd pods. I will save the scoped report to agents/sre/reports/live-rca-{cluster}-etcd-{date}.md before replying."
+
+[[prompts]]
+name        = "live-component-rca"
+title       = "Live Component RCA"
+description = "Analyze a specific cluster component on the live cluster (etcd, ingress, nodes, operators, network) and save a scoped formatted report."
+
+[[prompts.arguments]]
+name        = "component"
+description = "Component to analyze: etcd, ingress, nodes, operators, network, monitoring, or a namespace/workload name"
+required    = true
+
+[[prompts.arguments]]
+name        = "incident_context"
+description = "Optional: incident or symptom description"
+required    = false
+
+[[prompts.messages]]
+role    = "user"
+content = """
+Analyze **{{component}}** on the live cluster and save a formatted RCA report.
+
+Incident context: {{incident_context}}
+
+Use kubernetes-mcp-server tools appropriate to the component. Always include ClusterVersion,
+ClusterOperator status for related operators, Warning events, and pod/node state as relevant.
+
+Save to: `agents/sre/reports/live-rca-{cluster}-{{component}}-{YYYY-MM-DD}.md`
+(sanitize component: lowercase, hyphens)
+Use `agents/sre/reports/rca-report-template.md` layout — all 9 sections.
+
+Reply with absolute path + 2–3 sentence summary. Do NOT reply chat-only.
+"""
+
+[[prompts.messages]]
+role    = "assistant"
+content = "Starting live {{component}} analysis. Report will be saved under agents/sre/reports/ before I reply."
+
+[[prompts]]
+name        = "must-gather-rca"
+title       = "Must-Gather RCA Report"
+description = "Analyze an extracted OpenShift must-gather bundle and produce a shareable RCA report with chain of events, primary and secondary causes, impact, and remediation."
+
+[[prompts.arguments]]
+name        = "must_gather_path"
+description = "Absolute path to extracted must-gather directory (NOT the .tar.gz — extract first with tar -xzf)"
+required    = true
+
+[[prompts.arguments]]
+name        = "incident_context"
+description = "Optional: brief description of the incident or symptoms"
+required    = false
+
+[[prompts.messages]]
+role    = "user"
+content = """
+Analyze this must-gather bundle and produce a **well-formatted shareable RCA report**.
+
+Must-gather path: {{must_gather_path}}
+Incident context: {{incident_context}}
+
+## Phase 1 — Load bundle
+
+1. Call `mustgather_use` with the **extracted directory path** (never the .tar.gz)
+2. Verify: Resources indexed > 0 and Namespaces > 0
+3. If indexed=0, stop and tell user to extract the archive first
+
+## Phase 2 — Collect data (mustgather_* tools)
+
+| Step | Tool | Args / Notes |
+|---|---|---|
+| Nodes | `mustgather_resources_list` | v1 Node |
+| Events | `mustgather_events_list` | type=Warning |
+| Reboots | `mustgather_events_list` | reason=Rebooted |
+| Node failures | `mustgather_events_list` | reason=NodeNotReady |
+| Crash loops | `mustgather_events_list` | reason=BackOff |
+| etcd health | `mustgather_etcd_health` | fallback: etcd_info/*.json in bundle |
+| etcd objects | `mustgather_etcd_object_count` | check event count bloat |
+| Alerts | `mustgather_monitoring_prometheus_alerts` | state=firing |
+| Targets | `mustgather_monitoring_prometheus_targets` | health=down |
+| Operator logs | `mustgather_pod_logs_grep` | filter error/failed on degraded pods |
+| Kubelet | `mustgather_node_kubelet_logs_grep` | on rebooted nodes |
+
+Also read ClusterOperator and ClusterVersion YAML from bundle for Failing/Degraded state.
+
+## Phase 3 — Build chain of events
+
+- Order events chronologically from must-gather event timestamps
+- Identify the **trigger** (reboot, upgrade, network outage, etc.)
+- Map cascade: trigger → NodeNotReady → API/CNI failure → operator degradation
+- mermaid flowchart + numbered timeline + one-line causal chain
+
+## Phase 4 — Write report (use ALL sections)
+
+### Header metadata table
+Report ID, cluster name, OCP version, must-gather path, gather timestamp from bundle, severity, status at capture
+
+### 1. Executive Summary
+### 2. Chain of Events (mermaid + timeline + one-line chain)
+### 3. Primary Root Cause (evidence from events/logs/operators)
+### 4. Secondary / Contributing Causes (pre-existing issues that amplified impact)
+### 5. Impact Assessment
+### 6. Cluster State at Capture (nodes, etcd, degraded operators)
+### 7. Recommended Remediation (P0/P1/P2)
+### 8. Shareable Workflow — Must-Gather
+Steps: extract tar.gz → mustgather_use → tool sequence → report template
+Share matrix for SRE / Management / Red Hat support
+### 9. Appendix (key evidence snippets)
+
+## Phase 5 — Save report document (mandatory)
+
+1. Write the **complete** report (all sections above) to a markdown file using the host editor / file-write capability.
+2. Default path: `agents/sre/reports/mustgather-rca-{cluster-short-name}-{YYYY-MM-DD}.md`
+   - Derive cluster name from ClusterVersion in the bundle or must-gather directory name
+   - Sanitize: lowercase, replace dots/spaces with hyphens
+   - If file exists for same cluster+date, append `-HHMM` (24h UTC)
+3. Include must-gather path in report metadata table
+4. Template reference: `agents/sre/reports/rca-report-template.md`
+5. Use readable layout: **At a Glance** tables, **Contents** TOC, blockquote one-line chain,
+   critical timeline (5–8 rows) + `<details>` for extended timeline, numbered P0/P1/P2 action tables,
+   collapsible `<details>` appendix evidence blocks
+6. Reply in chat with: absolute path to the saved file, primary cause (one line), status at capture, top P0 action
+"""
+
+[[prompts.messages]]
+role    = "assistant"
+content = "Loading must-gather bundle and starting offline RCA analysis. I will write the full report to agents/sre/reports/ before replying."
+
+[[prompts]]
+name        = "prow-job-analysis"
+title       = "Prow CI Job Analysis"
+description = "Analyse a failed OpenShift Prow CI job from its URL. Identifies failure type (install/test/infra), downloads build log + JUnit XML, extracts must-gather if present, and produces a root-cause summary."
+
+[[prompts.arguments]]
+name        = "prow_url"
+description = "Full Prow job URL — e.g. https://prow.ci.openshift.org/view/gs/test-platform-results/logs/<job>/<build_id>"
+required    = true
+
+[[prompts.arguments]]
+name        = "test_name"
+description = "Optional: specific failed test name to focus on"
+required    = false
+
+[[prompts.messages]]
+role    = "user"
+content = """
+Analyse this failed Prow CI job: {{prow_url}}
+{{test_name}}
+
+Follow this workflow:
+
+1. **Parse URL** — extract bucket path and build_id (10+ digit number in path)
+   GCS base: https://storage.googleapis.com/test-platform-results/{bucket-path}/
+
+2. **Fetch prowjob.json** from {gcs_base}prowjob.json
+   Extract: job name, state (success/failure/aborted), refs (org/repo/PR), start/end time
+
+3. **Classify job type** from name:
+   - upgrade / metal / hypershift / fips / ipv6 / sno / aws / gcp / azure
+
+4. **Download artifacts** in this order:
+   a. build-log.txt        → overall pipeline log
+   b. artifacts/**/junit*.xml  → identifies failed steps/tests
+   c. artifacts/**/build-log.txt → per-step logs for failed steps
+
+5. **Find must-gather** — search artifacts/ for must-gather*.tar.gz
+   If found: load with the kubernetes-mcp-server `mustgather_use` tool, then run:
+   `mustgather_events_list`, `mustgather_pod_logs_grep`, `mustgather_etcd_health`,
+   `mustgather_monitoring_prometheus_alerts`, and related `mustgather_*` tools
+
+6. **Live cluster checks** (when kubeconfig is available) — use kubernetes-mcp-server tools:
+   `events_list`, `pods_list`, `pods_log`, `resources_get`, `nodes_debug_exec`, `nodes_top`
+
+7. **Classify failure** into one of:
+   - INSTALL_FAILURE  — cluster never came up
+   - TEST_FAILURE     — cluster up, specific test failed
+   - INFRA_FAILURE    — cloud/infra issue (quota, networking, timeout)
+   - FLAKE            — known intermittent issue
+
+8. **Output format**:
+   ## Prow Job Summary
+   - Job: <name>  |  State: <state>  |  Build: <build_id>
+   - PR: <org>/<repo>#<number> (if applicable)
+   - Duration: <start> → <end>
+
+   ## Failure Classification
+   [INSTALL/TEST/INFRA/FLAKE]
+
+   ## Root Cause
+   [specific error message with file:line reference]
+
+   ## Failed Step / Test
+   [junit test name or ci-operator step name]
+
+   ## Must-Gather Analysis (if available)
+   [summary from mustgather_* tools]
+
+   ## Recommended Action
+   [fix, rerun, or escalate]
+
+9. **Save report document** — write full analysis to `agents/sre/reports/prow-rca-{job-name-short}-{build_id}.md` and tell the user the absolute path.
+"""
+
+[[prompts.messages]]
+role    = "assistant"
+content = "I'll analyse the Prow job now. Fetching artifacts and correlating failures..."
+
+# ── Prow Job Analysis (quick variant — just URL, no must-gather) ──────────────
+
+[[prompts]]
+name        = "prow-job-quick"
+title       = "Prow Job Quick Summary"
+description = "Fetch build-log.txt and junit XMLs from a Prow job URL and return a one-paragraph failure summary."
+
+[[prompts.arguments]]
+name        = "prow_url"
+description = "Full Prow job URL"
+required    = true
+
+[[prompts.messages]]
+role    = "user"
+content = """
+Give me a quick failure summary for: {{prow_url}}
+
+1. Extract build_id from URL
+2. Fetch: https://storage.googleapis.com/test-platform-results/{bucket-path}/build-log.txt
+3. Fetch: https://storage.googleapis.com/test-platform-results/{bucket-path}/artifacts/**/junit*.xml
+4. Return: one paragraph with — what failed, which step, the key error line, and whether it looks like a flake or real failure.
+"""
+
+[[prompts.messages]]
+role    = "assistant"
+content = "Fetching build log and JUnit results..."

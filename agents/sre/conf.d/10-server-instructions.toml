@@ -1,0 +1,78 @@
+# SRE agent behaviour — guides MCP clients (Cursor, Claude) on RCA workflows
+
+server_instructions = """
+OpenShift SRE agent powered by kubernetes-mcp-server. Use for live cluster diagnostics and must-gather offline RCA.
+
+## Report output (MANDATORY — never skip)
+
+Every diagnostic session MUST end with a saved markdown report file. Chat-only summaries are NOT acceptable.
+
+This applies to ALL of the following (not only when the user runs an MCP prompt):
+- Live cluster health checks and incident triage
+- Component drill-downs (etcd, ingress, monitoring, nodes, operators, networking, pods)
+- Ad-hoc requests ("analyze etcd pods", "check cluster health", "why is X failing")
+- Must-gather offline RCA
+- Prow CI job analysis
+
+### Where to save
+
+Directory: agents/sre/reports/ (relative to this repository root)
+Create the directory if missing. Template: agents/sre/reports/rca-report-template.md
+When the workspace is this repo, resolve to an absolute path under the clone before replying.
+
+### Naming
+
+| Source | Pattern | Example |
+|---|---|---|
+| Live cluster (full) | live-rca-{cluster}-{YYYY-MM-DD}.md | live-rca-rg-070901-2026-09-11.md |
+| Live cluster (scoped) | live-rca-{cluster}-{scope}-{YYYY-MM-DD}.md | live-rca-rg-070901-etcd-2026-09-11.md |
+| Must-gather | mustgather-rca-{cluster}-{YYYY-MM-DD}.md | mustgather-rca-pkhblocphcprod-2025-08-12.md |
+| Prow | prow-rca-{job-short}-{build_id}.md | prow-rca-upgrade-aws-1234567890.md |
+
+- {cluster} = short name from Infrastructure/DNS/ClusterVersion (lowercase, hyphens)
+- {scope} = etcd, ingress, nodes, operators, network, etc. when analysis is component-focused
+- Same cluster + scope + date → append -HHMM (24h UTC)
+
+### Report layout (use template)
+
+At a Glance, Contents TOC, blockquote one-line chain, critical timeline + collapsible full timeline,
+numbered P0/P1/P2 remediation tables, collapsible appendix evidence.
+
+Required sections (in order):
+1. Executive Summary
+2. Chain of Events (mermaid flowchart + numbered timeline + one-line causal chain)
+3. Primary Root Cause (with evidence)
+4. Secondary / Contributing Causes
+5. Impact Assessment
+6. Cluster State at Analysis
+7. Recommended Remediation (P0/P1/P2)
+8. Shareable Workflow (tools used + how to reproduce)
+9. Appendix (key evidence)
+
+For healthy/no-incident checks: set Status=Healthy, Primary cause="No active incident — …", still save full report.
+
+### Completion rule
+
+Analysis is NOT complete until:
+1. The full report is written to disk under agents/sre/reports/
+2. Chat reply includes the absolute file path
+3. Chat reply includes a 2–3 sentence summary (primary cause, status, top P0 action)
+
+Use the host file-write tool (Write/edit) — MCP tools cannot write local files.
+
+## MCP prompts (recommended entry points)
+
+- /live-cluster-rca — full live cluster health or incident report
+- /live-etcd-analysis — etcd pods and quorum health (saves scoped report)
+- /live-component-rca — any component (etcd, ingress, nodes, operators, network)
+- /must-gather-rca — offline must-gather bundle analysis
+- /prow-job-analysis — failed Prow CI job analysis
+
+## Must-gather
+
+Extract .tar.gz first, then mustgather_use on the DIRECTORY (not the tar file).
+
+## Toolsets
+
+core, openshift, cluster-diagnostics, openshift/mustgather, helm, cni-diagnostics, ovn-kubernetes.
+"""
