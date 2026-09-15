@@ -42,4 +42,4 @@ Open **openshift-mcp-server-demo** in Cursor → `/live-cluster-rca` → report 
 
 - [Prompt Examples](../../docs/sre-agent/prompt-examples.md)
 - [Quick Start](../../docs/quickstart.md)
-- [MCP Server](../../docs/mcp-server/index.md) — generic `--toolsets` setup
+- [Quick Start](../../docs/quickstart.md)

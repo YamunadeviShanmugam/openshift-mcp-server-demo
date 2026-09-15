@@ -6,8 +6,8 @@ Generic setup for **[kubernetes-mcp-server](https://github.com/containers/kubern
 Use this section when you want **cluster tools only** — no SRE prompts, no mandatory RCA reports.
 
 !!! tip "Need the sample agent?"
-    See **[SRE Agent](../sre-agent/index.md)** for prompts, report templates, and `sre-agent.toml`.
-    Setup: **[Quick Start](../quickstart.md)** first, then **[SRE Agent](../sre-agent/index.md)** for `--config`.
+    See the **[SRE Agent](../sre-agent/index.md)** tab for `--config`, prompts, and RCA reports.
+    Complete the **[Quick Start](../quickstart.md)** tab first.
 
 ## What you get
 
