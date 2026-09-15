@@ -1,10 +1,5 @@
 # Quick Start
 
-Get **kubernetes-mcp-server** running in Cursor with CLI flags — no TOML config file.
-
-!!! tip "Sample SRE agent (prompts + RCA reports)?"
-    Complete this Quick Start first, then **[SRE Agent](sre-agent/index.md)** — add `--config` with `sre-agent.toml` there only.
-
 ## Prerequisites
 
 - **Go** and **make** (to build the MCP server)
@@ -35,11 +30,9 @@ Smoke test (optional):
 npx @modelcontextprotocol/inspector@latest $(pwd)/kubernetes-mcp-server
 ```
 
-Build details: [MCP Server — Build from Source](mcp-server/build-from-source.md)
-
 ## Step 2 — Apply MCP config (Cursor)
 
-Edit **`~/.cursor/mcp.json`**. Use **absolute paths** and **`--toolsets`** (not `--config`):
+Edit **`~/.cursor/mcp.json`**. Use **absolute paths**:
 
 ```json
 {
@@ -73,8 +66,6 @@ Edit **`~/.cursor/mcp.json`**. Use **absolute paths** and **`--toolsets`** (not 
 | `--kubeconfig` | **Required** — absolute path to your kubeconfig |
 | `--toolsets` | Enables cluster tools (comma-separated list) |
 | `--log-file` | Required in stdio mode (keeps logs off stdout) |
-
-More options: [MCP Server — Cursor Integration](mcp-server/cursor-integration.md)
 
 **Restart Cursor** → **Settings → MCP** → `openshift-mcp-server` connected.
 
@@ -113,6 +104,6 @@ Check logs if needed: `tail -f /tmp/kubernetes-mcp-server.log`
 
 ## Next steps
 
-- [MCP Server](mcp-server/index.md) — install, configuration, all flags
-- [SRE Agent](sre-agent/index.md) — add `sre-agent.toml` via `--config`, MCP prompts, RCA reports
-- [Cluster Health Workflow](workflows/cluster-health.md)
+- [SRE Workflows](workflows/cluster-health.md) — day-to-day SRE playbooks
+- [SRE Agent](sre-agent/index.md) — sample agent, prompts, RCA reports
+- [Cluster Health Workflow](workflows/cluster-health.md) — monitor nodes, pods, and operators
