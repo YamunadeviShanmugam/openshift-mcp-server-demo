@@ -1,65 +1,84 @@
 # OpenShift MCP Server - SRE Edition
 
-Welcome to the **OpenShift MCP Server** documentation — AI-assisted Kubernetes and OpenShift
-operations for Site Reliability Engineers, including the bundled **SRE agent** (live RCA,
-must-gather analysis, formatted reports).
+Welcome to the **OpenShift MCP Server** documentation - a native Go-based Model Context Protocol server enabling AI assistants to interact with Kubernetes and OpenShift clusters through natural language.
 
-## 🎯 What is this repo?
+## 🎯 What is OpenShift MCP Server?
 
-1. **SRE agent demo** — `agents/sre/` config, MCP prompts, and saved RCA reports
-2. **Documentation** — setup guides, SRE workflows, and reference material
-
-The MCP server binary is built from [openshift/openshift-mcp-server](https://github.com/openshift/openshift-mcp-server).
-This demo repo supplies the SRE config and report templates.
+A **direct Kubernetes API client** (not a kubectl wrapper) with **18+ specialized toolsets** for advanced cluster operations.
 
 ## 📚 Quick Navigation
 
 | | |
 |---|---|
-| **Start here** | [Quick Start — one flow](getting-started/quickstart.md) |
-| **SRE Agent** | [SRE Agent Setup](getting-started/sre-agent.md) |
-| **Build details** | [Build from Source](getting-started/build-from-source.md) |
-| **Cursor** | [Cursor Integration](getting-started/cursor-integration.md) |
+| **New Users** | [Quick Start (5 min)](getting-started/quickstart.md) |
+| **Install** | [Installation Guide](getting-started/installation.md) |
+| **Config** | [Configuration](getting-started/configuration.md) |
 | **Workflows** | [SRE Workflows](workflows/cluster-health.md) |
 
-## 🚀 Demo setup (3 steps)
+## 🛠️ 18+ Available Toolsets
+
+### Core & Diagnostics
+`core` • `cluster-diagnostics` • `openshift`
+
+### Virtualization & Compute
+`kubevirt` • `vm_troubleshoot` • `helm` • `tekton`
+
+### Networking
+`cni-diagnostics` • `ovn-kubernetes` • `netedge` • `netobserv`
+
+### Service Mesh & Multi-tenancy
+`ossm` • `kcp`
+
+### Observability & Monitoring
+`observability/metrics` • `observability/logs` • `observability/traces` • `observability/otelcol`
+
+### Backup & Recovery
+`oadp`
+
+## 🚀 30-Second Setup
 
 ```bash
-# 1. Clone and build MCP server
-git clone https://github.com/openshift/openshift-mcp-server.git
-cd openshift-mcp-server && make build
+# Install
+npx -y openshift-mcp-server@latest
 
-# 2. Clone demo
-cd .. && git clone https://github.com/YamunadeviShanmugam/openshift-mcp-server-demo.git
-cd openshift-mcp-server-demo
+# Add to Cursor (~/.cursor/mcp.json)
+{
+  "openshift-mcp-server": {
+    "command": "npx",
+    "args": ["-y", "openshift-mcp-server@latest"],
+    "env": {"KUBECONFIG": "~/.kube/config"}
+  }
+}
+
+# Use in Cursor
+"Show me cluster health and any pods in error state"
 ```
 
-**3.** Apply [`agents/sre/mcp.json.example`](../agents/sre/mcp.json.example) → `~/.cursor/mcp.json`  
-Open this repo in Cursor → `/live-cluster-rca`
+## 💡 Example Workflows
 
-[Full Quick Start →](getting-started/quickstart.md)
+**Cluster Health**: "How is my cluster? Show nodes, pod status, and resource usage"
 
-## 💡 Example prompts
+**VM Troubleshooting**: "Why is my VM stuck in Provisioning? How do I fix it?"
 
-```
-/live-cluster-rca
-```
+**Network Diagnostics**: "Diagnose connectivity issues between namespaces"
 
-```
-Give me a quick health check: nodes, pressure, top namespaces, CrashLoopBackOff pods
-```
+**Observability**: "Show me Prometheus metrics and Loki logs for errors"
+
+**Backup**: "Create a backup of my database namespace using OADP"
 
 ## 📖 Documentation
 
-- [Quick Start](getting-started/quickstart.md) — clone → build → config
-- [SRE Workflows](workflows/cluster-health.md)
-- [Must-Gather Analysis](advanced/must-gather.md)
+- [Getting Started](getting-started/quickstart.md) - Quick Start & Installation
+- [SRE Workflows](workflows/cluster-health.md) - 7 workflow guides
+- [Custom Tools Support](advanced/multi-cluster.md) - Multi-cluster, API, Security
+- [Reference](reference/toolsets.md) - Toolsets, Config, Troubleshooting
 
 ## 🔗 Resources
 
-- **MCP server:** [openshift/openshift-mcp-server](https://github.com/openshift/openshift-mcp-server)
-- **Demo repo:** [openshift-mcp-server-demo](https://github.com/YamunadeviShanmugam/openshift-mcp-server-demo)
+- **Repository**: [openshift/openshift-mcp-server](https://github.com/openshift/openshift-mcp-server)
+- **Docs**: [GitHub Docs](https://github.com/openshift/openshift-mcp-server/tree/main/docs)
+- **Issues**: [GitHub Issues](https://github.com/openshift/openshift-mcp-server/issues)
 
 ---
 
-**New team members:** [Team Onboarding](../TEAM_ONBOARDING.md)
+[→ Quick Start Guide](getting-started/quickstart.md)
