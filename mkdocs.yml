@@ -28,7 +28,8 @@ theme:
   features:
     - navigation.instant
     - navigation.tracking
-    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
     - search.suggest
     - search.highlight
     - content.code.copy
@@ -59,15 +60,6 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Quick Start: quickstart.md
-  - MCP Server:
-    - Overview: mcp-server/index.md
-    - Build from Source: mcp-server/build-from-source.md
-    - Installation: mcp-server/installation.md
-    - Cursor Integration: mcp-server/cursor-integration.md
-    - Configuration: mcp-server/configuration.md
-  - SRE Agent:
-    - Overview: sre-agent/index.md
-    - Prompt Examples: sre-agent/prompt-examples.md
   - SRE Workflows:
     - Cluster Health Monitoring: workflows/cluster-health.md
     - Troubleshooting & Debugging: workflows/troubleshooting.md
@@ -76,15 +68,18 @@ nav:
     - Disaster Recovery: workflows/disaster-recovery.md
     - Observability Setup: workflows/observability.md
     - Incident Response: workflows/incident-response.md
+  - SRE Agent:
+    - Overview: sre-agent/index.md
+    - Prompt Examples: sre-agent/prompt-examples.md
   - Advanced Topics:
     - Must-Gather Analysis: advanced/must-gather.md
     - Multi-Cluster Management: advanced/multi-cluster.md
     - Custom Toolsets: advanced/custom-toolsets.md
     - Security Best Practices: advanced/security.md
     - API Reference: advanced/api-reference.md
-  - Reference:
-    - Toolsets Guide: reference/toolsets.md
-    - SRE Tools Analysis: reference/sre-tools-analysis.md
-    - Configuration Reference: reference/configuration.md
-    - Troubleshooting: reference/troubleshooting.md
-    - FAQ: reference/faq.md
+    - Reference:
+      - Toolsets Guide: reference/toolsets.md
+      - SRE Tools Analysis: reference/sre-tools-analysis.md
+      - Configuration Reference: reference/configuration.md
+      - Troubleshooting: reference/troubleshooting.md
+      - FAQ: reference/faq.md

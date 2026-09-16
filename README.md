@@ -10,43 +10,23 @@ This repository contains comprehensive SRE-focused documentation and best practi
 
 ## 📚 Documentation Structure
 
-Published docs match the [GitHub Pages site](https://yamunadevishanmugam.github.io/openshift-mcp-server-demo/) — sidebar menu (MkDocs Material):
+Published docs use **six tabs** (MkDocs Material):
 
-| Section | Contents |
-|---------|----------|
-| **Quick Start** | [Quick Start](docs/quickstart.md) — build + `--toolsets` in `mcp.json` |
-| **MCP Server** | Build, install, Cursor stdio, CLI flags |
-| **SRE Agent** | Sample agent — `--config` + `sre-agent.toml` only here |
+| Tab | Contents |
+|-----|----------|
+| **Home** | Overview and navigation |
+| **Quick Start** | Build and connect in Cursor |
 | **SRE Workflows** | Cluster health, troubleshooting, incident response |
-| **Advanced Topics** | Must-gather, multi-cluster, custom toolsets |
-| **Reference** | Toolsets, config, troubleshooting, FAQ |
+| **SRE Agent** | Sample agent, prompt examples, RCA reports |
+| **Advanced Topics** | Must-gather, multi-cluster, reference, FAQ |
 
 ```
-📖 SRE Edition Documentation
-├── docs/quickstart.md           ← MCP server: build + --toolsets
-├── docs/mcp-server/             ← Generic install, Cursor, CLI flags
-├── docs/sre-agent/              ← SRE agent: --config + sre-agent.toml
-├── agents/sre/                  ← MCP config, prompts, reports (runtime files)
-├── SRE Workflows
-│   ├── Cluster Health Monitoring
-│   ├── Troubleshooting & Debugging
-│   ├── Security & Compliance
-│   ├── Performance Tuning
-│   ├── Disaster Recovery
-│   ├── Observability Setup
-│   └── Incident Response
-│
-├── Advanced Topics
-│   ├── Multi-Cluster Management
-│   ├── Custom Toolsets
-│   ├── API Reference
-│   └── Security Best Practices
-│
-└── Reference
-    ├── Toolsets Guide
-    ├── Configuration Reference
-    ├── Troubleshooting
-    └── FAQ
+📖 SRE Edition Documentation (6 tabs)
+├── Home
+├── Quick Start                  ← quickstart.md
+├── SRE Workflows                ← workflows/
+├── SRE Agent                    ← sre-agent/
+└── Advanced Topics              ← advanced/ + reference/
 ```
 
 ## 🚀 Quick Start
@@ -62,10 +42,9 @@ For the sample SRE agent (`--config`, `/live-cluster-rca`, reports): **[SRE Agen
 
 ## 📖 Documentation
 
-- **MCP Server**: [Overview](docs/mcp-server/index.md) — build, Cursor, CLI configuration
-- **SRE Agent**: [Overview](docs/sre-agent/index.md) — sample agent leveraging MCP server
+- **Quick Start**: [Setup guide](docs/quickstart.md)
+- **SRE Agent**: [Overview](docs/sre-agent/index.md) — sample agent, prompts, RCA reports
 - **Prompt Examples**: [Copy-paste catalog](docs/sre-agent/prompt-examples.md)
-- [Quick Start](docs/quickstart.md)
 - **SRE Workflows**:
   - [Cluster Health Monitoring](docs/workflows/cluster-health.md)
   - [Troubleshooting & Debugging](docs/workflows/troubleshooting.md)
@@ -146,7 +125,7 @@ For the sample SRE agent (`--config`, `/live-cluster-rca`, reports): **[SRE Agen
 | Binary | Production | 2 minutes |
 | Docker | CI/CD | 5 minutes |
 
-See [MCP Server Installation](docs/mcp-server/installation.md) for details.
+Build from source — see **[Quick Start](docs/quickstart.md)**.
 
 ## 🎓 Learning Path
 
@@ -158,7 +137,7 @@ See [MCP Server Installation](docs/mcp-server/installation.md) for details.
 
 - **OpenShift fork (build source):** [openshift/openshift-mcp-server](https://github.com/openshift/openshift-mcp-server) — `make build` → `kubernetes-mcp-server`
 - **Upstream:** [containers/kubernetes-mcp-server](https://github.com/containers/kubernetes-mcp-server)
-- **Build guide:** [MCP Server — Build from Source](docs/mcp-server/build-from-source.md)
+- **Build guide:** [Quick Start](docs/quickstart.md)
 - **Model Context Protocol:** [modelcontextprotocol.io](https://modelcontextprotocol.io)
 
 ## 💡 Pro Tips

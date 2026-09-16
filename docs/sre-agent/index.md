@@ -2,10 +2,10 @@
 
 **Sample agent leveraging MCP server** — MCP prompts, report templates, security defaults, and onboarding on top of **kubernetes-mcp-server**.
 
-Uses **`--config`** with `sre-agent.toml` (TOML + `conf.d/` drop-ins). Do not use this on the [Quick Start](../quickstart.md) or [MCP Server](../mcp-server/index.md) pages — those use **`--toolsets`** only.
+Uses **`--config`** with `sre-agent.toml` (TOML + `conf.d/` drop-ins). Complete **[Quick Start](quickstart.md)** first.
 
 !!! info "MCP server only?"
-    For cluster tools without prompts or RCA reports, see **[MCP Server](../mcp-server/index.md)** or **[Quick Start](../quickstart.md)**.
+    For cluster tools without prompts or RCA reports, see **[Quick Start](quickstart.md)**.
 
 ## Prerequisites
 
@@ -131,5 +131,4 @@ Edit `sre-agent.toml` to add/remove toolsets.
 ## Next steps
 
 - [Prompt Examples](prompt-examples.md)
-- [Team Onboarding](../../TEAM_ONBOARDING.md)
 - [Cluster Health Workflow](../workflows/cluster-health.md)

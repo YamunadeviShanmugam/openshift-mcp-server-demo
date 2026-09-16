@@ -86,7 +86,7 @@ Configure Cursor to run **kubernetes-mcp-server** in stdio mode.
 ## Sample agent
 
 For MCP prompts (`/live-cluster-rca`) and saved RCA reports, use the
-**[SRE Agent](../sre-agent/index.md)** section in the sidebar menu instead.
+**[SRE Agent](../sre-agent/index.md)** tab instead.
 
 ## Next steps
 
